@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "lastScan": "2026-09-24T07:30:00+02:00",
-  "note": "Erstbefüllung · 13 Einträge",
+  "lastScan": "2026-09-26T19:33:28+02:00",
+  "note": "0 neu, 1 aktualisiert",
   "issues": [
     {
       "id": "cf34-8e-fadec-idle-lock",
@@ -161,17 +161,14 @@
       "family": [
         "E2"
       ],
-      "impact": "Ohne GPS keine PBN/RNP- und RNP-AR-Verfahren (z. B. Congonhas), EGPWS nur barometrisch; Flugzeuge sind je nach Route/Verfahren nicht dispatchbar. Azul stellte am 22.09. rund 3 h die gesamte E2-Flotte (43 Flugzeuge) ab, >70 Flüge betroffen (laut Valor, unbestätigt). Embraer: keine Auswirkung auf die Flugsicherheit, aber auf den Flugplan. ANAC beobachtet.",
+      "impact": "Betroffene E2 mit Primus-Epic-2-Avionik können bei Auftreten des Fehlers beim Einschalten am Boden nicht dispatcht werden (Meldungen 'GPS NOT AVAIL' / 'RNP AR NOT AVAIL'); ein Reset stellt den GPS-Empfang temporär wieder her, der Fehler kann jedoch erneut auftreten und erneute Nichtverfügbarkeit verursachen. Bereits im Flug befindliche Maschinen sind nicht betroffen; Embraer und Honeywell betonen, dass die Flugsicherheit nicht beeinträchtigt sei. Bislang kein AD oder verpflichtendes SB, weiterhin nur Betreiber-/Herstellerkommunikation.",
       "models": "E190-E2, E195-E2 (Honeywell Primus Epic 2.0)",
       "operators": [
         "Azul",
-        "KLM Cityhopper",
-        "Binter",
-        "Helvetic",
+        "Porter Airlines",
+        "Virgin Australia",
         "Mexicana",
-        "Luxair (Berichte)",
-        "Porter (Berichte)",
-        "Virgin Australia (Berichte)"
+        "diverse europäische Fluggesellschaften"
       ],
       "ref": "Embraer Relevant Event Communication (kein AD/SB, Stand 23.09.)",
       "severity": "grounding",
@@ -195,13 +192,25 @@
         {
           "title": "Simple Flying – Embraer opens crisis room",
           "url": "https://simpleflying.com/embraer-e2-gps-failure-crisis-room-airlines-cancel-flights/"
+        },
+        {
+          "title": "GPS system issue impacts Embraer E2s worldwide - ch-aviation",
+          "url": "https://www.ch-aviation.com/news/172115-gps-system-issue-impacts-embraer-e2s-worldwide"
+        },
+        {
+          "title": "Embraer activates crisis room over global E2 GPS failure - InsideFlyer",
+          "url": "https://www.insideflyer.com/posts/embraer-activates-crisis-room-over-global-e2-gps-failure/"
+        },
+        {
+          "title": "Azul Embraer E2 GPS Fault Grounded More Than 40 Jets in Brazil for About Three Hours on 22 September 2026 - Rio Times",
+          "url": "https://www.riotimesonline.com/azul-embraer-e2-gps-instability-2026/"
         }
       ],
       "status": "active",
-      "summary": "GPS-Empfang fällt beim Hochfahren am Boden aus. Ein System-Reset (Cold Restart über Breaker) hilft nur vorübergehend. Embraer und Honeywell haben einen gemeinsamen Krisenstab; Ursache offiziell noch unbekannt, permanenter Fix erwartet als Honeywell-Software-Update.",
+      "summary": "Die GPS-Empfangsstörung bei Honeywell Primus Epic 2 betrifft laut Folgeberichten die weltweite E2-Flotte breiter als zunächst bekannt: Neben Azul (rund ein Drittel der Flotte am 23.09. am Boden, 43 Jets betroffen) meldeten auch Porter Airlines, Virgin Australia, die mexikanische Mexicana sowie mehrere europäische Fluggesellschaften Ausfälle bzw. Annullierungen. Embraer Technical Services hat ein Bulletin mit einem provisorischen Reset-Verfahren veröffentlicht; eine dauerhafte technische Lösung steht laut Berichten weiterhin aus, Ursachenanalyse durch gemeinsamen Krisenstab von Embraer und Honeywell läuft.",
       "system": "Avionik / Navigation (ATA 34)",
       "title": "GPS-Empfangsausfall Honeywell Primus Epic 2 – weltweite E2-Störung",
-      "updated": "2026-09-24T07:30:00+02:00"
+      "updated": "2026-09-26T19:33:28+02:00"
     },
     {
       "id": "e2-mau3b-braking",
