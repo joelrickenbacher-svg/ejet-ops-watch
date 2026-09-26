@@ -1,0 +1,10 @@
+{
+  "name": "ejet-ops-watch",
+  "private": true,
+  "description": "Installierbare Web-App: betriebsrelevante Probleme bei Embraer E1/E2-Jets",
+  "scripts": {
+    "update": "node scripts/update.mjs",
+    "test": "node scripts/selftest.mjs",
+    "start": "python3 -m http.server 8080"
+  }
+}

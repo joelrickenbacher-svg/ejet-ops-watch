@@ -1,0 +1,360 @@
+{
+  "schema": 1,
+  "lastScan": "2026-09-24T07:30:00+02:00",
+  "note": "Erstbefüllung · 13 Einträge",
+  "issues": [
+    {
+      "id": "cf34-8e-fadec-idle-lock",
+      "date": "2025-11-18",
+      "deadline": "Kommentarfrist 02.01.2026 – Final Rule noch nicht gefunden",
+      "family": [
+        "E1"
+      ],
+      "impact": "Risiko Schubverlust / eingeschränkte Schubkontrolle; Software-Update der EEC erforderlich. Status der Final Rule beobachten.",
+      "models": "E170, E175 (CF34-8E); auch CRJ mit CF34-8C",
+      "operators": [],
+      "ref": "FAA NPRM FR 2025-20089",
+      "severity": "limitation",
+      "sources": [
+        {
+          "title": "Federal Register 2025-20089 (NPRM)",
+          "url": "https://www.federalregister.gov/documents/2025/11/18/2025-20089/airworthiness-directives-general-electric-company-engines"
+        }
+      ],
+      "status": "proposed",
+      "summary": "Nach 'Engine Degraded'-Meldung können bestimmte EEC-Softwareversionen das Triebwerk auf Idle reduzieren und den Schubhebel sperren, bis es abgestellt und neu gestartet wird.",
+      "system": "Triebwerk CF34-8E, EEC/FADEC",
+      "title": "CF34-8E: FADEC-Software kann Triebwerk auf Idle festsetzen",
+      "updated": "2026-09-24T07:30:00+02:00"
+    },
+    {
+      "id": "e1-mlg-locking-stay",
+      "date": "2024-06-26",
+      "family": [
+        "E1"
+      ],
+      "impact": "Einmalige Inspektion/Teiletausch; Einbauverbot betroffener Teile.",
+      "models": "ERJ 170 (E170/E175)",
+      "operators": [],
+      "ref": "FAA AD 2024-12-08 · FR 2024-13938",
+      "severity": "inspection",
+      "sources": [
+        {
+          "title": "Federal Register 2024-13938",
+          "url": "https://www.federalregister.gov/documents/2024/06/26/2024-13938/airworthiness-directives-embraer-sa-type-certificate-previously-held-by-yabor-indstria-aeronutica-sa"
+        }
+      ],
+      "status": "inforce",
+      "summary": "Nach 'Gear not locked'-Anzeige im Endanflug mit Notfallerklärung: Prüfung der Wartungsunterlagen und der Locking-Stay-Brackets, Austausch bestimmter Muttern.",
+      "system": "Fahrwerk (MLG)",
+      "title": "E170/175: Hauptfahrwerk Locking-Stay-Halterung, falsche Befestigungsteile",
+      "updated": "2026-09-24T07:30:00+02:00"
+    },
+    {
+      "id": "e1-ods-sensing-elements",
+      "date": "2026-05-22",
+      "deadline": "AD 2026-10-01 wirksam ab 26.06.2026",
+      "family": [
+        "E1"
+      ],
+      "impact": "Inspektionen und Teiletausch; bis dahin mögliche MEL-/Dispatch-Einschränkungen bei ODS-Fehlern.",
+      "models": "ERJ 170, ERJ 190-100/-200, Lineage 1000 (190-100 ECJ)",
+      "operators": [],
+      "ref": "FAA AD 2026-10-01 (190-100 ECJ) · AD 2024-20-06 (ERJ 190) · AD 2024-14-08 (ERJ 170)",
+      "severity": "inspection",
+      "sources": [
+        {
+          "title": "Federal Register 2026-10270 (AD 2026-10-01)",
+          "url": "https://www.federalregister.gov/documents/2026/05/22/2026-10270/airworthiness-directives-embraer-sa-type-certificate-previously-held-by-yabor-indstria-aeronutica-sa"
+        },
+        {
+          "title": "Federal Register 2024-24453 (ERJ 190)",
+          "url": "https://www.federalregister.gov/documents/2024/10/24/2024-24453/airworthiness-directives-embraer-sa-type-certificate-previously-held-by-yabor-indstria-aeronutica-sa"
+        },
+        {
+          "title": "Federal Register 2024-18634 (ERJ 170)",
+          "url": "https://www.federalregister.gov/documents/2024/08/21/2024-18634/airworthiness-directives-embraer-sa-type-certificate-previously-held-by-yabor-indstria-aeronutica-sa"
+        }
+      ],
+      "status": "inforce",
+      "summary": "Herstellungsfehler an ODS-Sensorelementen der Bleed-Leitungen. Inspektion, ggf. Austausch, Einbauverbot betroffener Teile. Neueste AD (Mai 2026) erweitert auf die Lineage 1000.",
+      "system": "Pneumatik / Bleed-Leitungen, Overheat Detection",
+      "title": "E1: Fehlerhafte Overheat-Detection-Sensorelemente (Quality Escape)",
+      "updated": "2026-09-24T07:30:00+02:00"
+    },
+    {
+      "id": "e1-pylon-lower-link",
+      "date": "2025-07-21",
+      "family": [
+        "E1"
+      ],
+      "impact": "Häufigere Inspektionen, mehr Wartungszeit; Reparatur bei Rissbefund vor Weiterbetrieb.",
+      "models": "ERJ 170, ERJ 190-100/-200 (E170/175/190/195)",
+      "operators": [],
+      "ref": "FAA AD 2025-14-05 · FR 2025-13596",
+      "severity": "inspection",
+      "sources": [
+        {
+          "title": "Federal Register 2025-13596",
+          "url": "https://www.federalregister.gov/documents/2025/07/21/2025-13596/airworthiness-directives-embraer-sa-type-certificate-previously-held-by-yabor-indstria-aeronutica-sa"
+        }
+      ],
+      "status": "inforce",
+      "summary": "Ersetzt AD 2020-12-12: wiederkehrende Detailinspektionen der inneren und äusseren Pylon Lower Link Lugs, jetzt mit verkürzten Fristen.",
+      "system": "Triebwerksaufhängung (Pylon)",
+      "title": "E1: Risse an Pylon-Lower-Link-Laschen – verkürzte Intervalle",
+      "updated": "2026-09-24T07:30:00+02:00"
+    },
+    {
+      "id": "e2-aileron-backlash",
+      "date": "2025-01-14",
+      "family": [
+        "E2"
+      ],
+      "impact": "Wiederkehrende Inspektionen nach Flugstunden; Korrekturmassnahmen vor dem nächsten Flug bei Befund.",
+      "models": "ERJ 190-300, ERJ 190-400",
+      "operators": [],
+      "ref": "FAA AD 2024-25-01 (190-400) · AD 2024-25-04 (190-300)",
+      "severity": "inspection",
+      "sources": [
+        {
+          "title": "Federal Register 2025-00423 (AD 2024-25-01)",
+          "url": "https://www.federalregister.gov/documents/2025/01/14/2025-00423/airworthiness-directives-embraer-sa-type-certificate-previously-held-by-yabor-indstria-aeronutica-sa"
+        },
+        {
+          "title": "Federal Register 2025-00387 (AD 2024-25-04)",
+          "url": "https://www.federalregister.gov/documents/2025/01/14/2025-00387/airworthiness-directives-embraer-sa-type-certificate-previously-held-by-yabor-indstria-aeronutica-sa"
+        }
+      ],
+      "status": "inforce",
+      "summary": "Unerwarteter Verschleiss an Querruder-Scharnierlagern kann zu übermässigem Spiel und Limit Cycle Oscillation führen. Wiederkehrende Inspektionen und Backlash-Checks.",
+      "system": "Flugsteuerung, Querruder-Scharniere",
+      "title": "E2: Querruder-Lagerverschleiss / Spiel (Limit Cycle Oscillation)",
+      "updated": "2026-09-24T07:30:00+02:00"
+    },
+    {
+      "id": "e2-cafm-takeoff-calc",
+      "date": "2026-02-02",
+      "family": [
+        "E2"
+      ],
+      "impact": "Startleistungsberechnungen nur mit der neuen CAFM-Version gültig; betrifft Dispatch-/Performance-Prozesse und EFB-Tools.",
+      "models": "ERJ 190-300 (E190-E2), ERJ 190-400 (E195-E2)",
+      "operators": [],
+      "ref": "FAA AD 2026-02-11 · FR 2026-02097",
+      "severity": "limitation",
+      "sources": [
+        {
+          "title": "Federal Register 2026-02097",
+          "url": "https://www.federalregister.gov/documents/2026/02/02/2026-02097/airworthiness-directives-embraer-sa-type-certificate-previously-held-by-yabor-indstria-aeronutica-sa"
+        }
+      ],
+      "status": "inforce",
+      "summary": "Inkonsistenz im Takeoff-Modul des Computerized Airplane Flight Manual. AD verlangt AFM-Revision mit neuer CAFM-Version.",
+      "system": "Flugleistung / Computerized AFM",
+      "title": "E2: Fehler im Startberechnungs-Modul des CAFM",
+      "updated": "2026-09-24T07:30:00+02:00"
+    },
+    {
+      "id": "e2-gps-primus-epic2-2026-09",
+      "date": "2026-09-22",
+      "family": [
+        "E2"
+      ],
+      "impact": "Ohne GPS keine PBN/RNP- und RNP-AR-Verfahren (z. B. Congonhas), EGPWS nur barometrisch; Flugzeuge sind je nach Route/Verfahren nicht dispatchbar. Azul stellte am 22.09. rund 3 h die gesamte E2-Flotte (43 Flugzeuge) ab, >70 Flüge betroffen (laut Valor, unbestätigt). Embraer: keine Auswirkung auf die Flugsicherheit, aber auf den Flugplan. ANAC beobachtet.",
+      "models": "E190-E2, E195-E2 (Honeywell Primus Epic 2.0)",
+      "operators": [
+        "Azul",
+        "KLM Cityhopper",
+        "Binter",
+        "Helvetic",
+        "Mexicana",
+        "Luxair (Berichte)",
+        "Porter (Berichte)",
+        "Virgin Australia (Berichte)"
+      ],
+      "ref": "Embraer Relevant Event Communication (kein AD/SB, Stand 23.09.)",
+      "severity": "grounding",
+      "sources": [
+        {
+          "title": "FlightGlobal – Embraer works to understand GPS instability issue (23.09.2026)",
+          "url": "https://www.flightglobal.com/ops-safety/2026/09/embraer-works-to-understand-gps-instability-issue-with-e2-family-jets/"
+        },
+        {
+          "title": "Air Data News – GPS problem halts Azul's E2 flights for nearly three hours",
+          "url": "https://www.airdatanews.com/gps-problem-halts-azuls-embraer-e2-flights-for-nearly-three-hours/"
+        },
+        {
+          "title": "Aviacionline – GPS failure on Embraer E2 jets disrupts schedules",
+          "url": "https://www.aviacionline.com/english/manufacturers-mro/gps-failure-on-embraer-e2-jets-disrupts-operators-flight-schedules_a6ab327699606ad8515dd4578"
+        },
+        {
+          "title": "aeroTELEGRAPH – GPS-Probleme legen Embraer E2 weltweit lahm",
+          "url": "https://www.aerotelegraph.com/flugzeuge/gps-probleme-legen-embraer-e2-weltweit-lahm-flugausfaelle-auch-in-europa/q6k56q4"
+        },
+        {
+          "title": "Simple Flying – Embraer opens crisis room",
+          "url": "https://simpleflying.com/embraer-e2-gps-failure-crisis-room-airlines-cancel-flights/"
+        }
+      ],
+      "status": "active",
+      "summary": "GPS-Empfang fällt beim Hochfahren am Boden aus. Ein System-Reset (Cold Restart über Breaker) hilft nur vorübergehend. Embraer und Honeywell haben einen gemeinsamen Krisenstab; Ursache offiziell noch unbekannt, permanenter Fix erwartet als Honeywell-Software-Update.",
+      "system": "Avionik / Navigation (ATA 34)",
+      "title": "GPS-Empfangsausfall Honeywell Primus Epic 2 – weltweite E2-Störung",
+      "updated": "2026-09-24T07:30:00+02:00"
+    },
+    {
+      "id": "e2-mau3b-braking",
+      "date": "2025-03-28",
+      "family": [
+        "E2"
+      ],
+      "impact": "Zusätzliche AFM/QRH-Verfahren; Crew-Training und MEL-Handling bei MAU-Fehlern.",
+      "models": "ERJ 190-300, ERJ 190-400",
+      "operators": [],
+      "ref": "FAA AD 2025-06-09 · FR 2025-05331",
+      "severity": "limitation",
+      "sources": [
+        {
+          "title": "Federal Register 2025-05331",
+          "url": "https://www.federalregister.gov/documents/2025/03/28/2025-05331/airworthiness-directives-embraer-sa-type-certificate-previously-held-by-yabor-indstria-aeronutica-sa"
+        }
+      ],
+      "status": "inforce",
+      "summary": "Ausfall eines Modular Avionics Unit (MAU 3B) führte zu Brake-Fault-Meldungen und Verlust der normalen Bremsung, erst beim Betätigen bemerkt. AD fügt AFM-Verfahren für MAU-Ausfälle hinzu.",
+      "system": "Avionik MAU / Bremsen",
+      "title": "E2: MAU-3B-Ausfall mit unbemerktem Verlust der normalen Bremsung",
+      "updated": "2026-09-24T07:30:00+02:00"
+    },
+    {
+      "id": "pw1900g-durability-aog",
+      "date": "2025-11-17",
+      "family": [
+        "E2"
+      ],
+      "impact": "Reduzierte Flottenverfügbarkeit, Ersatztriebwerk-Bedarf. SalamAir hat E2-Auslieferungen auf 2028 verschoben, um den neuen Standard abzuwarten. Beobachten, ob das Ziel 'null AOG Ende 2026' hält.",
+      "models": "E190-E2, E195-E2",
+      "operators": [
+        "SalamAir (Auslieferungen verschoben)"
+      ],
+      "ref": "Embraer / P&W Dubai Airshow 2025",
+      "severity": "limitation",
+      "sources": [
+        {
+          "title": "Aviation Week – Embraer sees Pratt improvements on E2s",
+          "url": "https://aviationweek.com/air-transport/aircraft-propulsion/embraer-sees-pratt-improvements-e2s"
+        },
+        {
+          "title": "FlightGlobal – Embraer hails 'turning point' for E2's GTF engines",
+          "url": "https://www.flightglobal.com/aerospace/embraer-hails-turning-point-for-e2s-gtf-engines/165345.article"
+        }
+      ],
+      "status": "monitoring",
+      "summary": "Kurze Time-on-Wing und lange Shop-Visits haben E2 am Boden gehalten. Embraer und P&W erwarten null GTF-AOGs bis Ende 2026; Turnaround-Zeiten halbiert. Neue Brennkammer ab Auslieferungen 2027/28.",
+      "system": "Triebwerk PW1900G (Heissteil, Brennkammer)",
+      "title": "PW1900G-Haltbarkeit: GTF-bedingte AOGs und verzögerte Auslieferungen",
+      "updated": "2026-09-24T07:30:00+02:00"
+    },
+    {
+      "id": "pw1900g-hpc-vsv-bushing-nprm",
+      "date": "2026-09-17",
+      "deadline": "Kommentarfrist 19.10.2026; Borescope vor 8'000 FH bzw. innert 1'000 FH nach Inkrafttreten, dann alle 1'000 FH",
+      "family": [
+        "E2"
+      ],
+      "impact": "Wiederkehrende Borescope-Inspektionen; bei Befund Rotortausch vor dem nächsten Flug. Terminierende Massnahme: neue Buchsen beim nächsten Shop Visit. FAA nennt es Zwischenlösung – weitere Rulemaking möglich; EASA/TCCA-Äquivalente erwartet. Kein Grounding vorgesehen, aber zusätzliche Wartungsslots und Triebwerkswechsel bei Befunden.",
+      "models": "E190-E2, E195-E2 (auch A220 / PW1500G)",
+      "operators": [],
+      "ref": "FAA-2026-8816 · FR 2026-19094",
+      "severity": "inspection",
+      "sources": [
+        {
+          "title": "Federal Register 2026-19094 (NPRM)",
+          "url": "https://www.federalregister.gov/d/2026-19094"
+        },
+        {
+          "title": "TechTimes – FAA targets new compressor wear failure (17.09.2026)",
+          "url": "https://www.techtimes.com/articles/327687/20260917/faa-targets-new-compressor-wear-failure-pratt-whitney-a220-e2-engines.htm"
+        }
+      ],
+      "status": "proposed",
+      "summary": "Sechs Werkstattbefunde: verschlissene VSV-Buchsen lassen Leitschaufeln nach vorne kippen und am HPC-Rotor schleifen. Risiko: Rotorbruch mit nicht-eingedämmter Freisetzung. Basierend auf P&W Alert SBs vom 13.07.2026.",
+      "system": "Triebwerk PW1900G (HPC, Stufen 1–3)",
+      "title": "PW1900G: Verschleiss der HPC-Leitschaufel-Lagerbuchsen – FAA NPRM",
+      "updated": "2026-09-24T07:30:00+02:00"
+    },
+    {
+      "id": "pw1900g-powder-metal-ausi",
+      "date": "2025-01-09",
+      "family": [
+        "E2"
+      ],
+      "impact": "Wird überwiegend in regulären Shop Visits erledigt; trägt aber zu Shop-Kapazitätsengpässen und AOG-Zeiten bei.",
+      "models": "E190-E2, E195-E2 mit Triebwerken aus Q4/2015–Q3/2021",
+      "operators": [],
+      "ref": "FAA NPRM PW1500G/PW1900G (Jan. 2025)",
+      "severity": "inspection",
+      "sources": [
+        {
+          "title": "AirInsight – FAA extends inspections of GTF engines on A220 and E2",
+          "url": "https://airinsight.com/faa-extends-inspections-of-gtf-engines-on-the-airbus-a220-and-embraer-e2/"
+        }
+      ],
+      "status": "inforce",
+      "summary": "Angled Ultrasonic Inspections (AUSI) der HPT-Naben Stufe 1/2 und HPC-Scheibe Stufe 8 sowie beschleunigter Austausch bestimmter Teile wegen kontaminiertem Pulvermetall.",
+      "system": "Triebwerk PW1900G (HPT-Scheiben 1/2, HPC-Stufe 8)",
+      "title": "PW1900G Pulvermetall-Kontamination: Ultraschall-Inspektionen HPT/HPC",
+      "updated": "2026-09-24T07:30:00+02:00"
+    },
+    {
+      "id": "radalt-5g-canada",
+      "date": "2026-06-30",
+      "deadline": "Wirksam ab 01.07.2026",
+      "family": [
+        "E1",
+        "E2"
+      ],
+      "impact": "Einschränkungen z. B. bei CAT II/III bzw. RA-abhängigen Anflügen in Kanada; relevant für US-Regionalbetreiber (E175) auf Kanada-Strecken.",
+      "models": "Alle Transport-Flugzeuge mit Radio-Altimeter, inkl. E1 und E2",
+      "operators": [],
+      "ref": "FAA AD 2026-13-02 · FR 2026-13162",
+      "severity": "limitation",
+      "sources": [
+        {
+          "title": "Federal Register 2026-13162",
+          "url": "https://www.federalregister.gov/documents/2026/06/30/2026-13162/airworthiness-directives-transport-and-commuter-category-airplanes"
+        }
+      ],
+      "status": "inforce",
+      "summary": "AFM-Limitationen für US-registrierte Flugzeuge im kanadischen Luftraum: bestimmte Operationen, die RA-Daten benötigen, sind wegen möglicher 5G-Interferenz (3,7–3,98 GHz) verboten.",
+      "system": "Radio-Altimeter (ATA 34)",
+      "title": "5G-C-Band in Kanada: Betriebsverbote für Radio-Altimeter-abhängige Verfahren",
+      "updated": "2026-09-24T07:30:00+02:00"
+    },
+    {
+      "id": "radalt-interference-tolerant-rule",
+      "date": "2026-07-31",
+      "deadline": "Part 121/129 (≥30 Sitze): 30.12.2030",
+      "family": [
+        "E1",
+        "E2"
+      ],
+      "impact": "Nachrüstung/Austausch von RA-Geräten auf E1- und E2-Flotten in den USA bis Ende 2030 einplanen; ohne Nachrüstung drohen danach Betriebseinschränkungen.",
+      "models": "Alle E-Jets im US-Betrieb (Part 121/129)",
+      "operators": [],
+      "ref": "FAA Final Rule · FR 2026-15585",
+      "severity": "watch",
+      "sources": [
+        {
+          "title": "Federal Register 2026-15585",
+          "url": "https://www.federalregister.gov/documents/2026/07/31/2026-15585/requirements-for-interference-tolerant-radio-altimeter-systems"
+        }
+      ],
+      "status": "inforce",
+      "summary": "Alle Radio-Altimeter müssen neue Mindestanforderungen an Störfestigkeit gegen Upper-C-Band-5G erfüllen, bevor die FCC das Band freigibt.",
+      "system": "Radio-Altimeter",
+      "title": "FAA-Regel: störfeste Radio-Altimeter bis Ende 2030 Pflicht",
+      "updated": "2026-09-24T07:30:00+02:00"
+    }
+  ]
+}

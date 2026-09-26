@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>E-Jet Ops Watch</title>
+<meta name="description" content="Betriebsrelevante Probleme bei Embraer E1- und E2-Jets: ADs, Groundings, Einschränkungen.">
+<meta name="theme-color" content="#1D4F7C" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0F1720" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Ops Watch">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600;700&family=Source+Sans+3:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <button class="icon-btn" id="backBtn" type="button" aria-label="Zurück" hidden>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+    </button>
+    <div class="brand">
+      <span class="brand-eyebrow" id="eyebrow">Embraer E1 · E2</span>
+      <h1 id="screenTitle">Lage</h1>
+    </div>
+    <button class="icon-btn" id="refreshBtn" type="button" aria-label="Aktualisieren">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><path d="M20 4v5h-5"/></svg>
+    </button>
+  </header>
+
+  <div class="statusline" id="statusline" role="status" aria-live="polite"></div>
+
+  <main id="view" tabindex="-1"></main>
+
+  <nav class="tabbar" aria-label="Hauptnavigation">
+    <a href="#/lage" data-tab="lage">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg>
+      <span>Lage</span>
+    </a>
+    <a href="#/liste" data-tab="liste">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13"/><circle cx="3.5" cy="6" r="1"/><circle cx="3.5" cy="12" r="1"/><circle cx="3.5" cy="18" r="1"/></svg>
+      <span>Einträge</span>
+    </a>
+    <a href="#/merkliste" data-tab="merkliste">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12v18l-6-4-6 4z"/></svg>
+      <span>Merkliste</span>
+    </a>
+    <a href="#/info" data-tab="info">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg>
+      <span>Info</span>
+    </a>
+  </nav>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+  <noscript><p style="padding:24px">E-Jet Ops Watch braucht JavaScript.</p></noscript>
+  <script src="app.js" defer></script>
+</body>
+</html>
