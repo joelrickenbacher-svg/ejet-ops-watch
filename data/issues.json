@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "lastScan": "2026-09-26T19:33:28+02:00",
-  "note": "0 neu, 1 aktualisiert",
+  "lastScan": "2026-09-28T20:58:34+02:00",
+  "note": "Keine Änderungen · Regeln (KI nicht verfügbar)",
   "issues": [
     {
       "id": "cf34-8e-fadec-idle-lock",
@@ -365,5 +365,13 @@
       "title": "FAA-Regel: störfeste Radio-Altimeter bis Ende 2030 Pflicht",
       "updated": "2026-09-24T07:30:00+02:00"
     }
-  ]
+  ],
+  "lastRun": {
+    "at": "2026-09-28T20:58:34+02:00",
+    "faa": 0,
+    "news": 31,
+    "candidates": 24,
+    "mode": "Regeln (KI nicht verfügbar)",
+    "errors": []
+  }
 }
