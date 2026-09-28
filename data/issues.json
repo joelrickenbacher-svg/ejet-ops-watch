@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "lastScan": "2026-09-28T21:45:15+02:00",
-  "note": "0 neu, 4 aktualisiert · KI teilweise",
+  "lastScan": "2026-09-28T22:00:22+02:00",
+  "note": "0 neu, 3 aktualisiert · KI teilweise",
   "issues": [
     {
       "id": "cf34-8e-fadec-idle-lock",
@@ -249,14 +249,34 @@
           "title": "Gazeta do Povo – Problema global em GPS paralisa voos da Azul com Embraer E2",
           "url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxNcVVzcmhaTzRxc2RkWUVFTUpsQ201NTVGSHhORklnbFhwdVIzbmlZeUFGbGV6OUR1WWJGWC13TDNLOUFBUWVybHNkYWpYUDg2dEN0LVBFckJ5bTdiclA3ZFhvdTl1Q1BqWXpmNW9DOEpuQV9CN3NJV3JTODE5MGw2RE1LbWVaUFlCelZ5TjZiWVNza0g1cE02am96NzlZWWlmYzVLMnlUNTZTUEk?oc=5",
           "date": "2026-09-23"
+        },
+        {
+          "title": "AEROIN – Azul retoma voos com aeronaves Embraer E195-E2 após falha global de sinal de GPS no modelo",
+          "url": "https://news.google.com/rss/articles/CBMirwFBVV95cUxQRkw5dHdXRURvNFpLb3NMdjI3UVZ0bXBXVlMzb1NCbXVHbnp6ZkRSeWsweXY0RzlPTGFfQUVXMnJkVEhWX2t2OURJSWJlZHdjcjJLSzFwZW8talJrYnc0ZzJfU1JaY1JvaXdlVUZIY2JnZzVTOWNWOTMwVk54czRVNHljZjN1NXE3TENDbTduUXRHM1JOd2tIX0ZCUlhTT0JJeUtnNExBMk1zOGdvRFVv0gGvAUFVX3lxTFBGTDl0d1dFRG80Wktvc0x2MjdRVnRtcFdWUzNvU0JtdUduenpmRFJ5azB5djRHOU9MYV9BRVcycmRUSFZfa3Y5RElJYmVkd2NyMktLMXBlby1qUmtidzRnMl9TUlpjUm9pd2VVRkhjYmdnNVM5Y1Y5MzBWTnhzNFU0eWNmM3U1cTdMQ0NtN25RdEczUk53a0hfRkJSWFNPQkl5S2c0TEEyTXM4Z29EVW8?oc=5",
+          "date": "2026-09-23"
+        },
+        {
+          "title": "Portal AquiVale – Aviões fabricados pela Embraer, em São José, são afetados por pane global no GPS",
+          "url": "https://news.google.com/rss/articles/CBMirAFBVV95cUxQWFczb2hxdW1XN0dZVFp4OEhMOUtrR21ZanJBNzljS3dfT3lnSGFod3AxM25ISjNSMVBDX0R2R041MDdocWo3NGJtaUo4S0dVR1lLVm5KMzZCeWpCWGs0TnFONlV4NXh1T3dIdnN3M00wbjhSQzJGVS1EVTZHeUp2SWdrN0VCbzNkWmpfY0xjQ3pLN2xoV1BHdTloMmpxTjgtblpEY1pIX3Q5LTQ3?oc=5",
+          "date": "2026-09-24"
+        },
+        {
+          "title": "Aerospace Global News – GPS ‘instability’ disrupts Embraer E2 jets as investigation launched",
+          "url": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxQeDBCdk1IRzBzOFhFTGxZeDN6THplMlNzYWZLNG55SDdoTDFFTXhZaVBId19VcHF6ckxfcGxsVk5tRkNYalRoZzVzcXYtVlYyektOMlo4cDZtSlVMSmpTY1U4UDRmdlRKalBZVzVVZVhLVmRqdE1rNWxTMU4tNWUyTTdVWG85cmtN?oc=5",
+          "date": "2026-09-23"
+        },
+        {
+          "title": "airdatanews.com – GPS problem halts Azul’s Embraer E2 flights for nearly three hours",
+          "url": "https://news.google.com/rss/articles/CBMimgFBVV95cUxNajN1RUVnOE5IZVZJQ0N3cjJpTUJBQlJJeEVndUpkbTFRaDVKT1lRZFc1VkY3MURHOXVZTGJFQlltTG1TLTJVOTNmZGY1cDJxU2ZkdW9mYVVSNlBMLVJaeTZTVmR5TUd0REQySnF5dEFZVTZ0cHgtNHNuUjFLZkZiYzYyM3VyeTdCM3dBR1Vld1lKZjFlNlpITU9B?oc=5",
+          "date": "2026-09-23"
         }
       ],
       "status": "active",
-      "summary": "Die weltweite GPS-Empfangsstörung beim Avioniksystem Honeywell Primus Epic 2 führte bei Azul am 23.09. zur Stornierung von über 80 Flügen mit rund 8'000 betroffenen Passagieren. Neben Azul sind auch weitere internationale E2-Betreiber wie Porter Airlines und Virgin Australia von der Störung betroffen (laut Berichten).",
+      "summary": "Die weltweite GPS-Empfangsstörung beim Avioniksystem Honeywell Primus Epic 2 führte bei Azul am 23.09. zur Stornierung von über 80 Flügen. Neben Azul waren auch internationale Betreiber wie Porter Airlines betroffen. Nach Anpassungen am Flugplan und Behebung des Signalsystems nimmt Azul den Flugbetrieb mit ihren E195-E2 wieder auf (laut AEROIN).",
       "system": "Avionik / Navigation (ATA 34)",
       "title": "GPS-Empfangsausfall Honeywell Primus Epic 2 – weltweite E2-Störung",
-      "updated": "2026-09-28T21:45:15+02:00",
-      "latest": "23.09. aeroTELEGRAPH: GPS-Probleme bei Embraer E2 treffen Airlines weltweit"
+      "updated": "2026-09-28T22:00:22+02:00",
+      "latest": "24.09. Portal AquiVale: Aviões fabricados pela Embraer, em São José, são afetados por pane global no GPS"
     },
     {
       "id": "e2-mau3b-braking",
@@ -413,7 +433,7 @@
     }
   ],
   "lastRun": {
-    "at": "2026-09-28T21:45:15+02:00",
+    "at": "2026-09-28T22:00:22+02:00",
     "faa": 0,
     "news": 89,
     "candidates": 30,
