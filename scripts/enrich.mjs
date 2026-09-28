@@ -16,6 +16,7 @@ Entscheide pro Kandidat:
 - "ignore": nicht im Umfang, kein betriebsrelevantes Problem, oder nichts Neues gegenüber einem bestehenden Eintrag.
 - "update": neue Information zu einem bestehenden Eintrag (target = dessen id), z. B. Ursache gefunden, Fix, AD erlassen, Problem behoben.
 - "new": neues, eigenständiges Problem.
+Wichtig: Meldungen zur URSACHE, Lösung oder Aufhebung eines bestehenden Problems sind "update" des bestehenden Eintrags, auch wenn die Meldung andere Flugzeugtypen mitnennt (z. B. Ursache einer GPS-Störung gefunden). In summary dann den neuen Stand beschreiben.
 Benutze nur Fakten aus dem Kandidaten. Nichts erfinden. Unbestätigte Meldungen als "(Berichte)" kennzeichnen.
 Texte auf Deutsch (Schweizer Schreibweise, kein ß), sachlich, knapp.
 severity: grounding = Flugzeuge am Boden/nicht dispatchbar; limitation = Betriebseinschränkung (Verfahren, AFM, MEL, Luftraum, Verfügbarkeit); inspection = Inspektion/Wartung nach AD/SB; watch = beobachten.

@@ -27,11 +27,10 @@ const done = new Set(processed.urls || []);
 for (const it of data.issues) for (const s of it.sources || []) { const n = normUrl(s.url); if (n) done.add(n); }
 
 const now = zurichISO();
-const firstRun = !(processed.urls || []).length;
 const day = (d) => d.toISOString().slice(0, 10);
-const last = data.lastScan ? new Date(data.lastScan) : new Date(Date.now() - 21 * 864e5);
-const faaSince = day(new Date(Math.min(last.getTime() - 3 * 864e5, firstRun ? Date.now() - 21 * 864e5 : Infinity)));
-const newsDays = firstRun ? 7 : Math.min(7, Math.max(2, Math.ceil((Date.now() - last.getTime()) / 864e5) + 1));
+// Immer ein festes Fenster; bereits Verarbeitetes filtert data/processed.json heraus.
+const faaSince = day(new Date(Date.now() - 30 * 864e5));
+const newsDays = Number(process.env.NEWS_DAYS || 7);
 
 // ---- 1. Sammeln
 const errors = [];
@@ -43,7 +42,7 @@ if (errors.length === 2) { console.error(errors.join("\n")); process.exit(1); }
 const fresh = (c) => { const n = normUrl(c.url); return n && !done.has(n); };
 const candidates = [
   ...faa.filter(fresh),
-  ...news.filter(fresh).sort((a, b) => String(b.date).localeCompare(String(a.date))).slice(0, 24),
+  ...news.filter(fresh).sort((a, b) => String(b.date).localeCompare(String(a.date))).slice(0, 30),
 ];
 
 // ---- 2. Aufbereiten

@@ -14,10 +14,14 @@ const PROBLEM = /(ground|AOG|aircraft on ground|inspect|directive|\bAD\b|NPRM|fa
 // Reine Geschäftsmeldungen
 const BUSINESS = /(\border(s|ed)?\b|deliver(y|ies|ed)|lease|leasing|financ|backlog|share price|stock|earnings|revenue|livery|route launch|new route|bestell|auslieferung|encomenda|entrega|pedido|ações|acciones)/i;
 
+// Folgethemen: GPS-/Avionik-Störungen, die E-Jets betreffen können
+const FOLLOWUP = /(GPS|GNSS|Primus Epic|Honeywell|NTS-3|satellit|satélite|satelite|avionic|aviônic)/i;
+
 export function isRelevantNews(title, snippet = "") {
   const t = `${title} ${snippet}`;
-  if (!EJET.test(t)) return false;
-  if (OUT_OF_SCOPE.test(t) && !/E-?Jet|E1[79]5|E19[05]|E2\b|ERJ/i.test(t)) return false;
+  const ejet = EJET.test(t) || /\bEmbraer\b/i.test(t);
+  if (!ejet && !(FOLLOWUP.test(t) && /(aircraft|airline|jets?|avi(ões|ones)|flugzeug|aeronave)/i.test(t) && /(GPS|GNSS)/i.test(t))) return false;
+  if (OUT_OF_SCOPE.test(t) && !/E-?Jet|E1[79]5|E19[05]|E2\b|ERJ|GPS|GNSS/i.test(t)) return false;
   if (!PROBLEM.test(t)) return false;
   if (BUSINESS.test(title) && !/(ground|AOG|fault|failure|directive|störung|falha|pane)/i.test(title)) return false;
   return true;
@@ -85,6 +89,8 @@ const NEWS_QUERIES = [
   { q: '"PW1900G" OR "CF34-8E" OR "CF34-10E"', hl: "en-US", gl: "US", ceid: "US:en" },
   { q: 'Embraer (E2 OR E195 OR E190 OR E175) (Störung OR Ausfall OR Grounding OR Problem OR Notlandung)', hl: "de", gl: "CH", ceid: "CH:de" },
   { q: 'Embraer (E2 OR E195 OR E190) (falha OR pane OR problema OR solo OR ANAC)', hl: "pt-BR", gl: "BR", ceid: "BR:pt-419" },
+  { q: 'Embraer (falha OR pane OR problema OR GPS OR satélite OR ANAC)', hl: "pt-BR", gl: "BR", ceid: "BR:pt-419" },
+  { q: '(GPS OR GNSS) (Embraer OR "Primus Epic" OR Honeywell OR "NTS-3") (aircraft OR airlines OR jets OR satellite)', hl: "en-US", gl: "US", ceid: "US:en" },
 ];
 
 const decode = (s) => String(s || "")

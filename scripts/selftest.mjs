@@ -97,3 +97,7 @@ const known = new Set([normUrl(fr[2].url), normUrl(cands[2].url)]);
 const r3 = applyAnswer(data, r2.answer, known, "2026-10-06T06:30:00+02:00");
 assert.equal(r3.added, 1);
 console.log("Selbsttest Sammler/Aufbereitung ok");
+assert.equal(isRelevantNews("Falha de GPS nos jatos da Embraer foi provavelmente causada por teste em satélite militar americano"), true, "Folgemeldung Embraer GPS");
+assert.equal(isRelevantNews("US Air Force satellite test disrupted GPS on airline jets"), true, "Folgemeldung GPS-Test");
+assert.equal(isRelevantNews("Embraer reports record quarterly deliveries"), false, "Geschäftsmeldung");
+console.log("Selbsttest Folgemeldungen ok");
