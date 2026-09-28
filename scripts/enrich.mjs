@@ -36,7 +36,7 @@ function describe(c, i) {
   return lines.join("\n");
 }
 
-async function callModel(endpoint, model, token, user) {
+async function callModel(endpoint, model, token, user, system = SYSTEM) {
   let lowThinking = true; // Gemini "denkt" sonst viel und braucht das Token-Budget auf
   for (let attempt = 1; attempt <= 3; attempt++) {
     const res = await fetch(endpoint, {
@@ -47,7 +47,7 @@ async function callModel(endpoint, model, token, user) {
         temperature: 0.2,
         max_tokens: 8000,
         ...(lowThinking ? { reasoning_effort: "low" } : {}),
-        messages: [{ role: "system", content: SYSTEM }, { role: "user", content: user }],
+        messages: [{ role: "system", content: system }, { role: "user", content: user }],
       }),
     });
     if (res.ok) {
@@ -146,6 +146,40 @@ export function heuristicNews(c) {
     ref: `Medienbericht${c.source ? " · " + c.source : ""}`,
     date: c.date,
   };
+}
+
+// ---------------------------------------------------------------- Übersetzung der Schlagzeilen
+
+const TRANSLATE = `Übersetze Schlagzeilen aus der Luftfahrt ins Deutsche (Schweizer Schreibweise, kein ß), knapp und sachlich wie eine Schlagzeile.
+Datum und Quelle am Anfang (z. B. "25.09. AEROIN:") unverändert lassen. Eigennamen, Typenbezeichnungen und Abkürzungen (E195-E2, NTS-3, ANAC, GPS) nicht übersetzen.
+Ist eine Schlagzeile schon deutsch, gib sie unverändert zurück.
+Antworte NUR mit JSON: {"items":[{"id":"","text":""}]}`;
+
+/**
+ * Übersetzt das Feld "latest" aller Einträge, deren Schlagzeile sich seit der letzten Übersetzung geändert hat.
+ * Markiert übersetzte Einträge mit latestDe (= übersetzter Text) und latestOrig (Original).
+ * Ändert `issues` direkt. Gibt die Anzahl übersetzter Einträge zurück.
+ */
+export async function translateLatest(issues, { token, models = [], endpoint = "" } = {}, log = []) {
+  const todo = issues.filter((i) => i.latest && i.latest !== i.latestDe);
+  if (!todo.length || !token || !endpoint || !models.length) return 0;
+  const user = JSON.stringify({ items: todo.map((i) => ({ id: i.id, text: i.latest })) });
+  for (const model of models) {
+    try {
+      const out = extractJson(await callModel(endpoint, model, token, user, TRANSLATE));
+      let n = 0;
+      for (const it of Array.isArray(out.items) ? out.items : []) {
+        const issue = todo.find((i) => i.id === it.id);
+        const text = clean(it.text, 300);
+        if (!issue || !text) continue;
+        issue.latestOrig = issue.latest;
+        issue.latest = issue.latestDe = text;
+        n++;
+      }
+      return n;
+    } catch (e) { log.push(`Übersetzung nicht möglich: ${String(e.message).slice(0, 200)}`); }
+  }
+  return 0;
 }
 
 // ---------------------------------------------------------------- Hauptfunktion

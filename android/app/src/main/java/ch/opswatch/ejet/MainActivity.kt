@@ -174,6 +174,14 @@ class MainActivity : Activity() {
 
         @JavascriptInterface
         fun appVersion(): String = BuildConfig.VERSION_NAME
+
+        @JavascriptInterface
+        fun testNotification() = runOnUiThread {
+            maybeAskNotificationPermission(force = true)
+            Notifier.notify(this@MainActivity, listOf(DataRepository.Change(
+                "test", "Test: E-Jet Ops Watch", "watch", false,
+                "So sieht eine Benachrichtigung aus, wenn es Neues gibt.")))
+        }
     }
 
     companion object {

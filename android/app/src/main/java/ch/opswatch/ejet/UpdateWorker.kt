@@ -11,7 +11,7 @@ import androidx.work.Worker
 import androidx.work.WorkerParameters
 import java.util.concurrent.TimeUnit
 
-/** Prüft im Hintergrund alle paar Stunden auf neue Einträge und meldet sie. */
+/** Prüft im Hintergrund etwa stündlich auf neue Einträge und Updates und meldet sie. */
 class UpdateWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params) {
 
     override fun doWork(): Result {
@@ -35,11 +35,11 @@ class UpdateWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params)
             val constraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
-            val req = PeriodicWorkRequest.Builder(UpdateWorker::class.java, 3, TimeUnit.HOURS)
+            val req = PeriodicWorkRequest.Builder(UpdateWorker::class.java, 1, TimeUnit.HOURS)
                 .setConstraints(constraints)
                 .build()
             WorkManager.getInstance(ctx)
-                .enqueueUniquePeriodicWork(PERIODIC, ExistingPeriodicWorkPolicy.KEEP, req)
+                .enqueueUniquePeriodicWork(PERIODIC, ExistingPeriodicWorkPolicy.UPDATE, req)
         }
 
         fun runOnce(ctx: Context) {

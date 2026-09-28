@@ -9,7 +9,7 @@ import java.net.URL
 /** Lädt data/issues.json vom Web, hält eine lokale Kopie und merkt sich den zuletzt bekannten Stand. */
 class DataRepository(private val ctx: Context) {
 
-    data class Change(val id: String, val title: String, val severity: String, val isNew: Boolean)
+    data class Change(val id: String, val title: String, val severity: String, val isNew: Boolean, val detail: String)
 
     private val cacheFile = File(ctx.filesDir, "issues.json")
     private val prefs = ctx.getSharedPreferences(Prefs.FILE, Context.MODE_PRIVATE)
@@ -59,14 +59,28 @@ class DataRepository(private val ctx: Context) {
             val obj = issues.optJSONObject(i) ?: continue
             val id = obj.optString("id")
             if (id.isEmpty()) continue
-            val updated = obj.optString("updated", obj.optString("date"))
-            next.put(id, updated)
-            if (known == null || obj.optString("status") == "resolved") continue
-            if (!known.has(id)) {
-                changes += Change(id, obj.optString("title"), obj.optString("severity"), isNew = true)
-            } else if (updated > known.optString(id)) {
-                changes += Change(id, obj.optString("title"), obj.optString("severity"), isNew = false)
+            // Nur inhaltliche Änderungen zählen (nicht jede zusätzliche Quelle)
+            val snap = JSONObject()
+                .put("status", obj.optString("status"))
+                .put("severity", obj.optString("severity"))
+                .put("latest", obj.optString("latest"))
+                .put("summary", obj.optString("summary").hashCode())
+            next.put(id, snap)
+            if (known == null) continue
+            val old = known.optJSONObject(id)
+            val status = obj.optString("status")
+            if (old == null) {
+                if (status != "resolved") changes += Change(id, obj.optString("title"), obj.optString("severity"), true, firstSentence(obj.optString("summary")))
+                continue
             }
+            val detail = when {
+                old.optString("status") != status -> "Status: ${statusLabel(status)}" + obj.optString("latest").let { if (it.isNotEmpty()) " · $it" else "" }
+                old.optString("latest") != obj.optString("latest") && obj.optString("latest").isNotEmpty() -> obj.optString("latest")
+                old.optString("severity") != obj.optString("severity") -> "Neu eingestuft"
+                old.optInt("summary") != obj.optString("summary").hashCode() -> firstSentence(obj.optString("summary"))
+                else -> null
+            }
+            if (detail != null) changes += Change(id, obj.optString("title"), obj.optString("severity"), false, detail)
         }
         prefs.edit().putString(Prefs.KEY_KNOWN, next.toString()).apply()
         return if (known == null) null else changes
@@ -75,21 +89,33 @@ class DataRepository(private val ctx: Context) {
 
     companion object {
         private val LOCK = Any()
+
+        private fun firstSentence(s: String): String =
+            s.split(Regex("(?<=[.!?])\\s+")).firstOrNull()?.take(200) ?: ""
+
+        fun statusLabel(s: String) = when (s) {
+            "active" -> "akut"
+            "proposed" -> "vorgeschlagen (NPRM)"
+            "inforce" -> "AD in Kraft"
+            "monitoring" -> "wird beobachtet"
+            "resolved" -> "behoben"
+            else -> s
+        }
     }
 }
 
 object Prefs {
     const val FILE = "ejw"
-    const val KEY_KNOWN = "known"
+    const val KEY_KNOWN = "known2" // v2: Inhalt statt Zeitstempel (alter Stand wird ignoriert)
     private const val KEY_NOTIFY = "notifyLevel"
     private const val KEY_ASKED = "askedPermission"
 
-    /** "urgent" (Grounding + Einschränkungen), "all" oder "off". */
+    /** "all" (Standard), "urgent" (nur Grounding + Einschränkungen) oder "off". */
     fun notifyLevel(ctx: Context): String =
-        ctx.getSharedPreferences(FILE, Context.MODE_PRIVATE).getString(KEY_NOTIFY, "urgent") ?: "urgent"
+        ctx.getSharedPreferences(FILE, Context.MODE_PRIVATE).getString(KEY_NOTIFY, "all") ?: "all"
 
     fun setNotifyLevel(ctx: Context, level: String) {
-        val v = if (level in setOf("urgent", "all", "off")) level else "urgent"
+        val v = if (level in setOf("urgent", "all", "off")) level else "all"
         ctx.getSharedPreferences(FILE, Context.MODE_PRIVATE).edit().putString(KEY_NOTIFY, v).apply()
     }
 

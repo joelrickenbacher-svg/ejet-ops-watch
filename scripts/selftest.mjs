@@ -167,3 +167,24 @@ if (gps) {
   assert.equal(ups[0].fields.sources.length, 2);
   console.log("Selbsttest Zusammenführung ok");
 }
+
+// Übersetzung der Schlagzeilen: nur geänderte, Original bleibt erhalten
+{
+  const { translateLatest } = await import("./enrich.mjs");
+  const iss = [
+    { id: "a", latest: "25.09. AEROIN: Falha de GPS causada por teste em satélite" },
+    { id: "b", latest: "24.09. X: Schon deutsch", latestDe: "24.09. X: Schon deutsch" },
+    { id: "c" },
+  ];
+  let asked = null;
+  globalThis.fetch = async (_u, opt) => {
+    asked = JSON.parse(JSON.parse(opt.body).messages[1].content).items.map((i) => i.id);
+    return new Response(JSON.stringify({ choices: [{ message: { content: '{"items":[{"id":"a","text":"25.09. AEROIN: GPS-Störung durch Satellitentest verursacht"}]}' } }] }), { status: 200 });
+  };
+  const n = await translateLatest(iss, { token: "t", models: ["m"], endpoint: "https://example.invalid/chat/completions" });
+  globalThis.fetch = realFetch;
+  assert.equal(n, 1); assert.deepEqual(asked, ["a"]);
+  assert.match(iss[0].latest, /Satellitentest/); assert.match(iss[0].latestOrig, /satélite/);
+  assert.equal(await translateLatest(iss, { token: "t", models: ["m"], endpoint: "x" }), 0, "nichts mehr zu tun");
+  console.log("Selbsttest Übersetzung ok");
+}

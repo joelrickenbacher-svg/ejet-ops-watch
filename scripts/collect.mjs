@@ -12,7 +12,7 @@ import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import { applyAnswer, normUrl, zurichISO } from "./merge.mjs";
 import { fetchFederalRegister, fetchNews } from "./sources.mjs";
-import { enrich } from "./enrich.mjs";
+import { enrich, translateLatest } from "./enrich.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const DATA = join(ROOT, "data", "issues.json");
@@ -91,6 +91,10 @@ const { answer, mode, log, aiSeen } = candidates.length
 // ---- 3. Einarbeiten (Quellen müssen aus den gesammelten Kandidaten stammen)
 const known = new Set(candidates.map((c) => normUrl(c.url)).filter(Boolean));
 const result = applyAnswer(data, answer, known, now);
+// Schlagzeilen hinter "Neu:" auf Deutsch (nur geänderte; ohne KI bleibt das Original stehen)
+const tlog = [];
+const translated = await translateLatest(result.data.issues, { token, models, endpoint }, tlog);
+if (translated) tlog.push(`${translated} Schlagzeile(n) übersetzt`);
 if (mode !== "Regeln" && candidates.length) result.data.note = `${result.data.note} · ${mode}`;
 result.data.lastRun = { at: now, faa: faa.length, news: news.length, candidates: candidates.length, mode, errors };
 
@@ -111,7 +115,7 @@ const report = [
   `Ergebnis: **${result.data.note}**`,
   deferred ? `${deferred} Meldung(en) nur per Regeln zugeordnet – werden beim nächsten Lauf mit KI nochmals geprüft.` : "",
   errors.length ? `\nQuellen-Fehler:\n${errors.map((e) => `- ${e}`).join("\n")}` : "",
-  [...log, ...result.log].length ? `\nHinweise:\n${[...log, ...result.log].map((l) => `- ${l}`).join("\n")}` : "",
+  [...log, ...result.log, ...tlog].length ? `\nHinweise:\n${[...log, ...result.log, ...tlog].map((l) => `- ${l}`).join("\n")}` : "",
 ].join("\n");
 console.log(report);
 if (process.env.GITHUB_STEP_SUMMARY) await appendFile(process.env.GITHUB_STEP_SUMMARY, report + "\n");
