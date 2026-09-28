@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "lastScan": "2026-09-28T21:08:52+02:00",
-  "note": "Keine Änderungen · Regeln (KI nicht verfügbar)",
+  "lastScan": "2026-09-28T21:14:48+02:00",
+  "note": "0 neu, 1 aktualisiert",
   "issues": [
     {
       "id": "cf34-8e-fadec-idle-lock",
@@ -204,13 +204,29 @@
         {
           "title": "Azul Embraer E2 GPS Fault Grounded More Than 40 Jets in Brazil for About Three Hours on 22 September 2026 - Rio Times",
           "url": "https://www.riotimesonline.com/azul-embraer-e2-gps-instability-2026/"
+        },
+        {
+          "title": "AirGuide Business – Embraer E2 GPS Reception Issue Disrupts Airlines Worldwide",
+          "url": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxOMjFXdjJReXRkNlozUlphUnFmd0hhM2dMX2lyS1NNc2NJdlBmU210N3RUd1A1ZUlDeXIxbVA5c0JMd3l1dUlyRWxfSUN6QmNzQUJlWWt1Vmwwa2VDaG9Cd0Z5cUtGWlp1ZzVFSTR3OExNSmk0OFVjZEkzRm0zVjdPelY0SmJ6dnRz?oc=5",
+          "date": "2026-09-28"
+        },
+        {
+          "title": "AEROIN – Falha de GPS nos jatos da Embraer foi provavelmente causada por teste em satélite militar americano",
+          "url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxPaHJwU1N2aENtU00tblV0SmRESEs2LWs1VlVUMFhPelZFNGt6YXdlWUp6SGxBeGRIRmVuLXRyWVNmRm9hZ3JoUUl1dnhORThIaWlxSU80S19oenlJSENLY05zLTBLSVlURldLdlBwd2Q5Tlk0Y2FJaFM3N0JXS3ZVeFNrU2tRbnY2Z0xZT1BZcGd1MVluZ3YzZWNYLW0yM1UzV0RaS3R5SHJWVC1ITER5N1I5U0NlRXJwZVU00gG7AUFVX3lxTE9ocnBTU3ZoQ21TTS1uVXRKZERISzYtazVWVVQwWE96VkU0a3phd2VZSnpIbEF4ZEhGZW4tdHJZU2ZGb2FncmhRSXV2eE5FOEhpaXFJTzRLX2h6eUlIQ0tjTnMtMEtJWVRGV0t2UHB3ZDlOWTRjYUloUzc3QldLdlV4U2tTa1FudjZnTFlPUFlwZ3UxWW5ndjNlY1gtbTIzVTNXRFpLdHlIclZULUhMRHk3UjlTQ2VFcnBlVTQ?oc=5",
+          "date": "2026-09-25"
+        },
+        {
+          "title": "Seu Crédito Digital – Falha no GPS da Embraer cancela voos da Azul",
+          "url": "https://news.google.com/rss/articles/CBMieEFVX3lxTE1CbzBNYXB6LVFtb09JZFNRb1hhbE1HR0l4VDByTk1mVmVFYXpPQmFCcG94b1psZVhnR3RKbV9jeXhnTDktYmREbGJZRjVmaUR6WDN5VWhGRm5sVHF4ZkxOU1pxMVUyQ1ZFNEhkWGZGc3FReUpkcEE2UA?oc=5",
+          "date": "2026-09-25"
         }
       ],
       "status": "active",
       "summary": "Die GPS-Empfangsstörung bei Honeywell Primus Epic 2 betrifft laut Folgeberichten die weltweite E2-Flotte breiter als zunächst bekannt: Neben Azul (rund ein Drittel der Flotte am 23.09. am Boden, 43 Jets betroffen) meldeten auch Porter Airlines, Virgin Australia, die mexikanische Mexicana sowie mehrere europäische Fluggesellschaften Ausfälle bzw. Annullierungen. Embraer Technical Services hat ein Bulletin mit einem provisorischen Reset-Verfahren veröffentlicht; eine dauerhafte technische Lösung steht laut Berichten weiterhin aus, Ursachenanalyse durch gemeinsamen Krisenstab von Embraer und Honeywell läuft.",
       "system": "Avionik / Navigation (ATA 34)",
       "title": "GPS-Empfangsausfall Honeywell Primus Epic 2 – weltweite E2-Störung",
-      "updated": "2026-09-26T19:33:28+02:00"
+      "updated": "2026-09-28T21:14:48+02:00",
+      "latest": "28.09. AirGuide Business: Embraer E2 GPS Reception Issue Disrupts Airlines Worldwide"
     },
     {
       "id": "e2-mau3b-braking",
@@ -367,11 +383,11 @@
     }
   ],
   "lastRun": {
-    "at": "2026-09-28T21:08:52+02:00",
+    "at": "2026-09-28T21:14:48+02:00",
     "faa": 0,
-    "news": 89,
+    "news": 88,
     "candidates": 30,
-    "mode": "Regeln (KI nicht verfügbar)",
+    "mode": "Regeln",
     "errors": []
   }
 }
