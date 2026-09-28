@@ -5,21 +5,24 @@ Handy-App für betriebsrelevante Probleme bei Embraer E1- und E2-Jets: ADs, Grou
 ## So funktioniert es
 
 ```
-GitHub Action (täglich 06:30)            GitHub Pages
-  └─ scripts/update.mjs                    └─ die App (index.html, app.js …)
-       ├─ fragt Claude mit Websuche             └─ lädt data/issues.json
-       ├─ prüft die Antwort (merge.mjs)
-       └─ committet data/issues.json  ──►  neue Version wird automatisch veröffentlicht
+GitHub Action (täglich 06:30 und 17:30)          GitHub Pages
+  └─ scripts/collect.mjs                           └─ die App (index.html, app.js …)
+       ├─ FAA: Federal Register (offene Schnittstelle)    └─ lädt data/issues.json
+       ├─ News: Google-News-Feeds (EN/DE/PT)
+       ├─ Aufbereitung: GitHub Models (kostenlos), sonst Regeln
+       └─ prüft und schreibt data/issues.json
 ```
 
-- **Keine Server, keine Datenbank.** Die Daten sind eine JSON-Datei im Repository.
-- **Quellenprüfung:** Ein neuer Eintrag oder eine Änderung wird nur übernommen, wenn die angegebene Quelle in den Suchergebnissen dieses Laufs vorkam. Einträge werden nie automatisch gelöscht.
-- **Auf dem Gerät gespeichert:** Merkliste, eigene Notizen, Gelesen-Status, Darstellung.
+- **Kein API-Schlüssel, keine Kosten.** Die KI-Aufbereitung nutzt GitHub Models mit dem Zugang, den jede Action automatisch hat (`permissions: models: read`).
+- **Quellen:** FAA-ADs und -NPRMs zu ERJ 170/190, PW1900G und CF34 kommen vollständig direkt vom Federal Register. Nachrichten kommen aus Google-News-Suchen auf Englisch, Deutsch und Portugiesisch; ein Filter lässt nur Meldungen zu E-Jets mit Problembezug durch.
+- **Quellenprüfung:** Einträge und Änderungen werden nur mit einer Quelle aus den gesammelten Kandidaten übernommen. Einträge werden nie automatisch gelöscht. Bereits verarbeitete Quellen stehen in `data/processed.json`.
+- **Ohne KI** (z. B. Tageslimit erreicht): FAA-Dokumente werden mit Regeln erfasst (Originaltext, Einstufung nach Dokumenttyp), Nachrichten nur bei klaren Grounding-Meldungen.
+- **Final Rule zu einem NPRM** (gleiches FAA-Docket) setzt den bestehenden Eintrag automatisch auf „In Kraft“.
 
 ## Einrichten (ca. 10 Minuten)
 
 1. **Repository anlegen:** Auf github.com ein neues Repository erstellen (z. B. `ejet-ops-watch`, gerne privat) und den Inhalt dieses Ordners hochladen („Add file → Upload files“ oder per `git push`).
-2. **API-Schlüssel hinterlegen:** Unter *Settings → Secrets and variables → Actions → New repository secret* einen Eintrag `ANTHROPIC_API_KEY` mit deinem Schlüssel von console.anthropic.com anlegen.
+2. **Kein API-Schlüssel nötig.** Die Aktualisierung nutzt kostenlos GitHub Models.
 3. **GitHub Pages einschalten:** *Settings → Pages → Build and deployment → Source: GitHub Actions*.
    Hinweis: Bei einem privaten Repository braucht Pages einen kostenpflichtigen GitHub-Plan. Sonst das Repository öffentlich machen; die Daten sind öffentliche Quellen.
 4. **Erster Lauf:** *Actions → „App veröffentlichen“ → Run workflow*. Danach steht die App unter `https://<dein-name>.github.io/ejet-ops-watch/`.
@@ -64,9 +67,8 @@ Die Web-App zeigt diesen Link unter *Info* automatisch an.
 
 | Was | Wo |
 |---|---|
-| Uhrzeit des Scans | `.github/workflows/update.yml`, Zeile `cron` (UTC). `30 4 * * *` = 06:30 Sommerzeit / 05:30 Winterzeit |
-| Modell | Repository-Variable `CLAUDE_MODEL` (Standard `claude-sonnet-5`, gründlicher: `claude-opus-5-5`) |
-| Suchen pro Lauf | Umgebungsvariable `MAX_SEARCHES` (Standard 20) |
+| Uhrzeit des Scans | `.github/workflows/update.yml`, Zeile `cron` (UTC). `30 4` und `30 15` = 06:30 und 17:30 Sommerzeit (Winterzeit eine Stunde früher) |
+| KI-Modell | Repository-Variable `MODELS_MODEL` (Standard `openai/gpt-4.1-mini`, Ersatz `openai/gpt-4o-mini`) |
 
 **Kosten:** Pro Lauf fallen bis zu 20 Websuchen (10 USD pro 1'000 Suchen) plus Tokens an, grob einige Rappen bis wenige Franken pro Tag je nach Modell. GitHub Actions und Pages sind für öffentliche Repositories gratis.
 
@@ -89,7 +91,7 @@ Die Web-App zeigt diesen Link unter *Info* automatisch an.
 ```
 python3 -m http.server 8080      # dann http://localhost:8080 öffnen
 node scripts/selftest.mjs        # Prüflogik testen (ohne API)
-ANTHROPIC_API_KEY=… DRY_RUN=1 node scripts/update.mjs   # Recherche ohne zu speichern
+GITHUB_TOKEN=… DRY_RUN=1 node scripts/collect.mjs   # Sammeln ohne zu speichern
 ```
 
 Die Daten ersetzen nicht die verbindlichen ADs und Service Bulletins deines Betriebs.
