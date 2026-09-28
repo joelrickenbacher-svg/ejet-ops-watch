@@ -8,7 +8,6 @@ on:
 
 permissions:
   contents: write
-  models: read      # kostenlose KI von GitHub (GitHub Models)
 
 concurrency:
   group: data-update
@@ -27,8 +26,8 @@ jobs:
         run: node scripts/selftest.mjs
       - name: Quellen sammeln und aufbereiten
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          MODELS_MODEL: ${{ vars.MODELS_MODEL }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          AI_MODEL: ${{ vars.AI_MODEL }}
         run: node scripts/collect.mjs
       - name: Änderungen committen
         run: |
