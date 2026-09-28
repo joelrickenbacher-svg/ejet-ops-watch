@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "lastScan": "2026-09-28T22:07:23+02:00",
-  "note": "0 neu, 1 aktualisiert · KI",
+  "lastScan": "2026-09-28T22:17:29+02:00",
+  "note": "Keine Änderungen · KI",
   "issues": [
     {
       "id": "cf34-8e-fadec-idle-lock",
@@ -276,7 +276,9 @@
       "system": "Avionik / Navigation (ATA 34)",
       "title": "GPS-Empfangsausfall Honeywell Primus Epic 2 – weltweite E2-Störung",
       "updated": "2026-09-28T22:07:23+02:00",
-      "latest": "25.09. AEROIN: Falha de GPS nos jatos da Embraer foi provavelmente causada por teste em satélite militar americano"
+      "latest": "25.09. AEROIN: GPS-Ausfall bei Embraer-Jets wahrscheinlich durch Test an US-Militärsatellit verursacht",
+      "latestOrig": "25.09. AEROIN: Falha de GPS nos jatos da Embraer foi provavelmente causada por teste em satélite militar americano",
+      "latestDe": "25.09. AEROIN: GPS-Ausfall bei Embraer-Jets wahrscheinlich durch Test an US-Militärsatellit verursacht"
     },
     {
       "id": "e2-mau3b-braking",
@@ -433,7 +435,7 @@
     }
   ],
   "lastRun": {
-    "at": "2026-09-28T22:07:23+02:00",
+    "at": "2026-09-28T22:17:29+02:00",
     "faa": 0,
     "news": 89,
     "candidates": 30,
