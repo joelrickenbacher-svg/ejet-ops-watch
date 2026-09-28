@@ -113,3 +113,28 @@ if (gps) {
 }
 assert.equal(matchIssue({ title: "Embraer E175 flap actuator failure", snippet: "" }, data.issues)?.id ?? null, data.issues.find((i) => /Querruder/.test(i.title) && i.family.includes("E1"))?.id ?? null, "keine E2-Zuordnung für E1-Meldung");
 console.log("Selbsttest Folgemeldungen ok");
+
+// Meldung hängt schon (per Regeln) am GPS-Eintrag → KI beurteilt sie erneut und ergänzt die Zusammenfassung
+if (gps) {
+  const nts = { kind: "news", url: "https://news.google.com/rss/articles/NTS3", title: "Falha de GPS nos jatos da Embraer foi provavelmente causada por teste em satélite militar americano", source: "AEROIN", snippet: "", date: "2026-09-25" };
+  const pre = structuredClone(data); pre.issues.find((i) => i.id === gps.id).sources.push({ title: "AEROIN – Falha de GPS", url: nts.url, date: nts.date });
+  const calls = [];
+  globalThis.fetch = async (_u, opt) => {
+    const body = JSON.parse(opt.body); calls.push(body);
+    if (body.reasoning_effort) return new Response('{"error":{"message":"Unknown name \\"reasoning_effort\\""}}', { status: 400 });
+    return new Response(JSON.stringify({ choices: [{ message: { content: "```json\n" + JSON.stringify({ items: [
+      { i: 0, action: "update", target: gps.id, summary: "Neuer Stand: Test des Satelliten NTS-3 als wahrscheinliche Ursache (laut Aeroin)." },
+    ] }) + "\n```" } }] }), { status: 200 });
+  };
+  const r6 = await enrich([nts], pre.issues, { token: "t", models: ["m"], endpoint: "https://example.invalid/chat/completions" });
+  globalThis.fetch = realFetch;
+  assert.equal(calls.length, 2, "ohne reasoning_effort wiederholt");
+  assert.equal(r6.mode, "KI"); assert.ok(r6.aiSeen.has(nts));
+  const r7 = applyAnswer(pre, r6.answer, new Set([normUrl(nts.url)]), "2026-09-28T21:00:00+02:00");
+  assert.equal(r7.updated, 1, "Update trotz bereits vorhandener Quelle");
+  assert.match(r7.data.issues.find((i) => i.id === gps.id).summary, /NTS-3/);
+  // ohne KI: nicht als erledigt markiert
+  const r8 = await enrich([nts], pre.issues, { token: "", models: [] });
+  assert.equal(r8.aiSeen.size, 0);
+  console.log("Selbsttest Neubeurteilung ok");
+}

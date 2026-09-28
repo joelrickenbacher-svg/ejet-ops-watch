@@ -20,11 +20,17 @@ const PROCESSED = join(ROOT, "data", "processed.json");
 const DRY = process.env.DRY_RUN === "1";
 
 const data = JSON.parse(await readFile(DATA, "utf8"));
-let processed = { v: 3, urls: [] };
+// processed.urls = fertig ausgewertete Quellen (FAA oder von der KI beurteilt).
+// Meldungen, die nur per Regeln zugeordnet wurden, gelten NICHT als fertig: sobald die KI läuft,
+// werden sie (solange sie im Suchfenster liegen) nochmals von der KI beurteilt.
+let processed = { v: 4, urls: [] };
 try { processed = JSON.parse(await readFile(PROCESSED, "utf8")); } catch { /* erster Lauf */ }
-if (processed.v !== 3) processed = { v: 3, urls: [] }; // ältere Liste verwerfen (neue Zuordnungsregeln)
+if (processed.v !== 4) processed = { v: 4, urls: [] }; // v3 enthielt auch nur regelbasiert zugeordnete Meldungen
 const done = new Set(processed.urls || []);
-for (const it of data.issues) for (const s of it.sources || []) { const n = normUrl(s.url); if (n) done.add(n); }
+// FAA-Dokumente, die schon als Quelle in einem Eintrag stehen, nicht nochmals anlegen
+for (const it of data.issues) for (const s of it.sources || []) {
+  const n = normUrl(s.url); if (n && n.startsWith("federalregister.gov/")) done.add(n);
+}
 
 const now = zurichISO();
 const day = (d) => d.toISOString().slice(0, 10);
@@ -73,9 +79,9 @@ async function pickModels() {
 }
 const models = await pickModels();
 
-const { answer, mode, log } = candidates.length
+const { answer, mode, log, aiSeen } = candidates.length
   ? await enrich(candidates, data.issues, { token, models, endpoint })
-  : { answer: { new: [], updates: [] }, mode: "–", log: [] };
+  : { answer: { new: [], updates: [] }, mode: "–", log: [], aiSeen: new Set() };
 
 // ---- 3. Einarbeiten (Quellen müssen aus den gesammelten Kandidaten stammen)
 const known = new Set(candidates.map((c) => normUrl(c.url)).filter(Boolean));
@@ -83,8 +89,14 @@ const result = applyAnswer(data, answer, known, now);
 if (mode !== "Regeln" && candidates.length) result.data.note = `${result.data.note} · ${mode}`;
 result.data.lastRun = { at: now, faa: faa.length, news: news.length, candidates: candidates.length, mode, errors };
 
-for (const c of candidates) { const n = normUrl(c.url); if (n) done.add(n); }
-const nextProcessed = { v: 3, urls: [...done].slice(-3000) };
+// Als erledigt merken: FAA immer; Meldungen nur, wenn die KI sie beurteilt hat
+// (ohne KI werden Meldungen beim nächsten Lauf nochmals geprüft, solange sie im Suchfenster liegen).
+let deferred = 0;
+for (const c of candidates) {
+  const n = normUrl(c.url); if (!n) continue;
+  if (c.kind === "faa" || aiSeen.has(c)) done.add(n); else deferred++;
+}
+const nextProcessed = { v: 4, urls: [...done].slice(-3000) };
 
 // ---- Bericht
 const report = [
@@ -92,6 +104,7 @@ const report = [
   `FAA-Dokumente: ${faa.length} (seit ${faaSince}) · Meldungen: ${news.length} (${newsDays} Tage) · neu zu prüfen: ${candidates.length}`,
   `Aufbereitung: ${mode}${models.length ? ` (${models.join(", ")})` : ""}`,
   `Ergebnis: **${result.data.note}**`,
+  deferred ? `${deferred} Meldung(en) nur per Regeln zugeordnet – werden beim nächsten Lauf mit KI nochmals geprüft.` : "",
   errors.length ? `\nQuellen-Fehler:\n${errors.map((e) => `- ${e}`).join("\n")}` : "",
   [...log, ...result.log].length ? `\nHinweise:\n${[...log, ...result.log].map((l) => `- ${l}`).join("\n")}` : "",
 ].join("\n");

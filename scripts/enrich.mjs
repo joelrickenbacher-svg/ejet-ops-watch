@@ -1,4 +1,4 @@
-// Aufbereitung der Kandidaten: deutsche Texte und Einstufung per GitHub Models (kostenlos in Actions),
+// Aufbereitung der Kandidaten: deutsche Texte und Einstufung per Google Gemini (Gratis-Stufe),
 // sonst einfache Regeln. Ergebnis ist eine "Antwort" im Format von merge.mjs ({ new, updates }).
 import { extractJson } from "./merge.mjs";
 import { familyOf } from "./sources.mjs";
@@ -37,23 +37,28 @@ function describe(c, i) {
 }
 
 async function callModel(endpoint, model, token, user) {
-  for (let attempt = 1; attempt <= 2; attempt++) {
+  let lowThinking = true; // Gemini "denkt" sonst viel und braucht das Token-Budget auf
+  for (let attempt = 1; attempt <= 3; attempt++) {
     const res = await fetch(endpoint, {
       method: "POST",
       headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json", Accept: "application/json" },
       body: JSON.stringify({
         model,
         temperature: 0.2,
-        max_tokens: 3000,
+        max_tokens: 8000,
+        ...(lowThinking ? { reasoning_effort: "low" } : {}),
         messages: [{ role: "system", content: SYSTEM }, { role: "user", content: user }],
       }),
     });
     if (res.ok) {
       const j = await res.json();
-      return j.choices?.[0]?.message?.content || "";
+      const content = j.choices?.[0]?.message?.content || "";
+      if (!content.trim()) throw new Error(`${model}: leere Antwort (${j.choices?.[0]?.finish_reason || "?"})`);
+      return content;
     }
     const body = (await res.text()).slice(0, 300);
-    if (res.status === 429 && attempt === 1) { await new Promise((r) => setTimeout(r, 30_000)); continue; }
+    if (res.status === 400 && lowThinking && /reasoning/i.test(body)) { lowThinking = false; continue; }
+    if (res.status === 429 && attempt < 3) { await new Promise((r) => setTimeout(r, 30_000)); continue; }
     throw new Error(`${model}: HTTP ${res.status} ${body}`);
   }
   throw new Error(`${model}: Limit erreicht`);
@@ -173,16 +178,22 @@ export async function enrich(candidates, issues, { token, models = [], endpoint 
     for (let start = 0; start < rest.length; start += 6) {
       const batch = rest.slice(start, start + 6);
       const user = `Bestehende Einträge (id | Titel | Status | Referenz, darunter der bisherige Stand):\n${existing}\n\nKandidaten:\n\n${batch.map((c, k) => describe(c, k)).join("\n\n")}`;
-      let content = null;
+      let parsed = null;
       for (const model of models) {
-        try { content = await callModel(endpoint, model, token, user); break; }
-        catch (e) { log.push(`KI nicht verfügbar: ${e.message}`); }
+        try {
+          const p = extractJson(await callModel(endpoint, model, token, user));
+          if (!Array.isArray(p?.items)) throw new Error(`${model}: Antwort ohne "items"`);
+          parsed = p; break;
+        } catch (e) { log.push(`KI nicht verfügbar: ${String(e.message).slice(0, 300)}`); }
       }
-      const parsed = content ? extractJson(content) : null;
-      if (!parsed || !Array.isArray(parsed.items)) { aiFail += batch.length; continue; }
+      if (!parsed) { aiFail += batch.length; continue; }
       for (const it of parsed.items) {
         const c = batch[Number(it.i)];
         if (c) decided.set(c, it);
+      }
+      for (const c of batch) {
+        const d = decided.get(c);
+        if (d) log.push(`KI: ${d.action}${d.action === "update" ? " → " + d.target : ""} · ${String(c.title).slice(0, 90)}`);
       }
       aiOk += batch.length;
     }
@@ -244,5 +255,5 @@ export async function enrich(candidates, issues, { token, models = [], endpoint 
   }
 
   const mode = !token ? "Regeln" : aiFail === 0 ? "KI" : aiOk === 0 ? "Regeln (KI nicht verfügbar)" : "KI teilweise";
-  return { answer, mode, log };
+  return { answer, mode, log, aiSeen: new Set(decided.keys()) };
 }
