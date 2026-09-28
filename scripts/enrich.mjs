@@ -56,9 +56,12 @@ async function callModel(endpoint, model, token, user) {
       if (!content.trim()) throw new Error(`${model}: leere Antwort (${j.choices?.[0]?.finish_reason || "?"})`);
       return content;
     }
-    const body = (await res.text()).slice(0, 300);
+    const raw = await res.text();
+    let body = raw.slice(0, 300);
+    try { const j = JSON.parse(raw); body = (Array.isArray(j) ? j[0] : j)?.error?.message || body; } catch { /* Rohtext */ }
     if (res.status === 400 && lowThinking && /reasoning/i.test(body)) { lowThinking = false; continue; }
     if (res.status === 429 && attempt < 3) { await new Promise((r) => setTimeout(r, 30_000)); continue; }
+    if (res.status === 503 && attempt < 2) { await new Promise((r) => setTimeout(r, 15_000)); continue; }
     throw new Error(`${model}: HTTP ${res.status} ${body}`);
   }
   throw new Error(`${model}: Limit erreicht`);
@@ -170,26 +173,39 @@ export async function enrich(candidates, issues, { token, models = [], endpoint 
   }
 
   // 2) KI-Aufbereitung in kleinen Paketen (Limits von GitHub Models: ~8k Token Eingabe)
-  const existing = issues.filter((i) => i.status !== "resolved")
-    .map((i) => `${i.id} | ${i.title} | ${i.status}${i.ref ? " | " + String(i.ref).slice(0, 80) : ""}\n   Stand: ${String(i.summary || "").slice(0, 260)}`).join("\n");
+  // Stand der Einträge; wird nach jedem Paket mit den KI-Updates nachgeführt, damit spätere
+  // Meldungen auf dem neuen Stand aufbauen (und z. B. eine gefundene Ursache nicht wieder verloren geht).
+  const state = new Map(issues.map((i) => [i.id, { ...i }]));
+  const existingText = () => [...state.values()].filter((i) => i.status !== "resolved")
+    .map((i) => `${i.id} | ${i.title} | ${i.status}${i.ref ? " | " + String(i.ref).slice(0, 80) : ""}\n   Stand: ${String(i.summary || "").slice(0, 600)}`).join("\n");
   const decided = new Map(); // Kandidat → Entscheidung
   let aiOk = 0, aiFail = 0;
+  const order = [...models];
   if (token && endpoint && models.length && rest.length) {
     for (let start = 0; start < rest.length; start += 6) {
       const batch = rest.slice(start, start + 6);
-      const user = `Bestehende Einträge (id | Titel | Status | Referenz, darunter der bisherige Stand):\n${existing}\n\nKandidaten:\n\n${batch.map((c, k) => describe(c, k)).join("\n\n")}`;
+      const user = `Bestehende Einträge (id | Titel | Status | Referenz, darunter der bisherige Stand):\n${existingText()}\n\nKandidaten:\n\n${batch.map((c, k) => describe(c, k)).join("\n\n")}`;
       let parsed = null;
-      for (const model of models) {
+      for (const model of [...order]) {
         try {
           const p = extractJson(await callModel(endpoint, model, token, user));
           if (!Array.isArray(p?.items)) throw new Error(`${model}: Antwort ohne "items"`);
           parsed = p; break;
-        } catch (e) { log.push(`KI nicht verfügbar: ${String(e.message).slice(0, 300)}`); }
+        } catch (e) {
+          log.push(`KI nicht verfügbar: ${String(e.message).slice(0, 200)}`);
+          order.push(order.splice(order.indexOf(model), 1)[0]); // überlastetes Modell ans Ende
+        }
       }
       if (!parsed) { aiFail += batch.length; continue; }
       for (const it of parsed.items) {
         const c = batch[Number(it.i)];
-        if (c) decided.set(c, it);
+        if (!c) continue;
+        decided.set(c, it);
+        const st = it.action === "update" && state.get(it.target);
+        if (st) {
+          if (clean(it.summary)) st.summary = clean(it.summary);
+          if (STATUSES.includes(it.status)) st.status = it.status;
+        }
       }
       for (const c of batch) {
         const d = decided.get(c);
@@ -202,14 +218,17 @@ export async function enrich(candidates, issues, { token, models = [], endpoint 
   // 3) Entscheidungen umsetzen, sonst Regeln
   let fallbackNews = 0;
   const linked = {};
+  const aiUpd = {};
   for (const c of rest) {
     const d = decided.get(c);
     if (d && d.action === "update" && issues.some((i) => i.id === d.target)) {
-      const fields = { sources: srcOf(c), latest: `${fmtDay(c.date)} ${c.source ? c.source + ": " : ""}${c.title}`.trim() };
-      for (const k of ["summary", "impact", "ref"]) if (clean(d[k])) fields[k] = clean(d[k]);
-      if (SEVERITIES.includes(d.severity)) fields.severity = d.severity;
-      if (STATUSES.includes(d.status)) fields.status = d.status;
-      answer.updates.push({ id: d.target, fields });
+      const u = (aiUpd[d.target] ||= { fields: { sources: [] }, heads: [] });
+      u.fields.sources.push(...srcOf(c));
+      u.heads.push(c);
+      // spätere Pakete kennen den neueren Stand → ihre Texte gewinnen
+      for (const k of ["summary", "impact", "ref"]) if (clean(d[k])) u.fields[k] = clean(d[k]);
+      if (SEVERITIES.includes(d.severity)) u.fields.severity = d.severity;
+      if (STATUSES.includes(d.status)) u.fields.status = d.status;
       continue;
     }
     if (d && d.action === "new") {
@@ -239,19 +258,22 @@ export async function enrich(candidates, issues, { token, models = [], endpoint 
       }
     }
   }
-  // Pro Eintrag: bis zu 3 neue Quellen, neueste Schlagzeile als "latest"
+  // Schlagzeile für "Neu:" – Ursache/Lösung vor allem anderen, dann die neueste
+  const KEY = /(ursache|grund|causa|causad|cause|caused|blamed|satellit|satélite|fix|behoben|gelöst|solução|resolvid|resolved|solved|software|directive|AD\b|diretriz)/i;
+  const byImportance = (a, b) => (KEY.test(b.title) - KEY.test(a.title)) || String(b.date).localeCompare(String(a.date));
+  const headline = (c) => `${fmtDay(c.date)} ${c.source ? c.source + ": " : ""}${c.title}`.trim();
+
+  for (const [id, u] of Object.entries(aiUpd)) {
+    u.heads.sort(byImportance);
+    answer.updates.push({ id, fields: { ...u.fields, latest: headline(u.heads[0]) } });
+  }
+  // Regel-Zuordnungen: bis zu 3 Quellen; "Neu:" nur setzen, wenn die KI den Eintrag nicht schon bearbeitet hat
   for (const [id, list] of Object.entries(linked)) {
-    const KEY = /(ursache|grund|causa|causad|cause|caused|blamed|satellit|satélite|fix|behoben|gelöst|solução|resolvid|resolved|solved|update|software|directive|AD\b|diretriz)/i;
-    list.sort((a, b) => (KEY.test(b.title) - KEY.test(a.title)) || String(b.date).localeCompare(String(a.date)));
-    const top = list[0];
-    answer.updates.push({
-      id,
-      fields: {
-        latest: `${fmtDay(top.date)} ${top.source ? top.source + ": " : ""}${top.title}`.trim(),
-        sources: list.slice(0, 3).flatMap(srcOf),
-      },
-    });
-    log.push(`${list.length} Meldung(en) → ${id}`);
+    list.sort(byImportance);
+    const fields = { sources: list.slice(0, 3).flatMap(srcOf) };
+    if (!aiUpd[id]) fields.latest = headline(list[0]);
+    answer.updates.push({ id, fields });
+    log.push(`${list.length} Meldung(en) per Regeln → ${id}`);
   }
 
   const mode = !token ? "Regeln" : aiFail === 0 ? "KI" : aiOk === 0 ? "Regeln (KI nicht verfügbar)" : "KI teilweise";

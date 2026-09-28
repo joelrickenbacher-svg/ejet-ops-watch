@@ -138,3 +138,32 @@ if (gps) {
   assert.equal(r8.aiSeen.size, 0);
   console.log("Selbsttest Neubeurteilung ok");
 }
+
+// Zwei KI-Updates zum selben Eintrag in verschiedenen Paketen + Regel-Zuordnung: Ursache bleibt erhalten
+if (gps) {
+  const mk = (n, title, date) => ({ kind: "news", url: `https://news.google.com/rss/articles/X${n}`, title, source: "S", snippet: "", date });
+  const cs = [mk(0, "Falha de GPS causada por teste em satélite militar", "2026-09-25"),
+    ...[1, 2, 3, 4, 5].map((n) => mk(n, `Irrelevant ${n}`, "2026-09-24")),
+    mk(6, "Azul retoma voos com E195-E2", "2026-09-26")];
+  const seenStand = [];
+  globalThis.fetch = async (_u, opt) => {
+    const user = JSON.parse(opt.body).messages[1].content;
+    seenStand.push(/NTS-3/.test(user));
+    const items = /Falha de GPS causada/.test(user)
+      ? [{ i: 0, action: "update", target: gps.id, summary: "Ursache: Test des Satelliten NTS-3 (laut S)." }, ...[1, 2, 3, 4, 5].map((i) => ({ i, action: "ignore" }))]
+      : [{ i: 0, action: "update", target: gps.id, summary: "Ursache: Test des Satelliten NTS-3. Azul fliegt wieder." }];
+    return new Response(JSON.stringify({ choices: [{ message: { content: JSON.stringify({ items }) } }] }), { status: 200 });
+  };
+  const rr = await enrich([...cs, mk(7, "Embraer GPS outage hits E2 fleet", "2026-09-27")], data.issues, { token: "t", models: ["m"], endpoint: "https://example.invalid/chat/completions" });
+  globalThis.fetch = realFetch;
+  assert.deepEqual(seenStand, [false, true], "zweites Paket kennt den neuen Stand");
+  const ups = rr.answer.updates.filter((u) => u.id === gps.id);
+  assert.equal(ups.length, 2, "KI-Update + Regel-Quelle");
+  assert.equal(ups[1].fields.latest, undefined, "Regeln überschreiben 'Neu' nicht");
+  const ap = applyAnswer(data, rr.answer, new Set([...cs, { url: "https://news.google.com/rss/articles/X7" }].map((c) => normUrl(c.url))), "2026-09-28T22:00:00+02:00");
+  const gg = ap.data.issues.find((i) => i.id === gps.id);
+  assert.match(gg.summary, /NTS-3/); assert.match(gg.latest, /satélite/);
+  assert.match(ups[0].fields.latest, /satélite/); assert.match(ups[0].fields.summary, /NTS-3.*Azul/);
+  assert.equal(ups[0].fields.sources.length, 2);
+  console.log("Selbsttest Zusammenführung ok");
+}

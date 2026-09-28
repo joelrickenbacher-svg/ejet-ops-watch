@@ -23,9 +23,9 @@ const data = JSON.parse(await readFile(DATA, "utf8"));
 // processed.urls = fertig ausgewertete Quellen (FAA oder von der KI beurteilt).
 // Meldungen, die nur per Regeln zugeordnet wurden, gelten NICHT als fertig: sobald die KI läuft,
 // werden sie (solange sie im Suchfenster liegen) nochmals von der KI beurteilt.
-let processed = { v: 4, urls: [] };
+let processed = { v: 5, urls: [] };
 try { processed = JSON.parse(await readFile(PROCESSED, "utf8")); } catch { /* erster Lauf */ }
-if (processed.v !== 4) processed = { v: 4, urls: [] }; // v3 enthielt auch nur regelbasiert zugeordnete Meldungen
+if (processed.v !== 5) processed = { v: 5, urls: [] }; // ältere Listen: einmalig alles im Suchfenster neu beurteilen
 const done = new Set(processed.urls || []);
 // FAA-Dokumente, die schon als Quelle in einem Eintrag stehen, nicht nochmals anlegen
 for (const it of data.issues) for (const s of it.sources || []) {
@@ -45,10 +45,12 @@ try { faa = await fetchFederalRegister(faaSince); } catch (e) { errors.push(`Fed
 try { news = await fetchNews(newsDays); } catch (e) { errors.push(`News: ${e.message}`); }
 if (errors.length === 2) { console.error(errors.join("\n")); process.exit(1); }
 
+const KEYNEWS = /(ursache|causa|causad|cause|caused|blamed|satellit|satélite|fix|behoben|solução|resolvid|resolved|solved|directive|diretriz)/i;
 const fresh = (c) => { const n = normUrl(c.url); return n && !done.has(n); };
 const candidates = [
   ...faa.filter(fresh),
-  ...news.filter(fresh).sort((a, b) => String(b.date).localeCompare(String(a.date))).slice(0, 30),
+  // Meldungen zu Ursache/Lösung zuerst, dann die neuesten (max. 30 pro Lauf)
+  ...news.filter(fresh).sort((a, b) => (KEYNEWS.test(b.title) - KEYNEWS.test(a.title)) || String(b.date).localeCompare(String(a.date))).slice(0, 30),
 ];
 
 // ---- 2. Aufbereiten
@@ -71,7 +73,10 @@ async function pickModels() {
     const ver = (id) => Number((id.match(/(\d+(?:\.\d+)?)/) || [0, 0])[1]);
     text.sort((a, b) => (/preview|exp/.test(a) - /preview|exp/.test(b)) || (/lite/.test(a) - /lite/.test(b)) || ver(b) - ver(a));
     if (!text.length) throw new Error("keine Flash-Modelle gefunden");
-    return text.slice(0, 3);
+    // die zwei neuesten Flash-Modelle, dazu ein Lite-Modell als Ausweichmöglichkeit bei Überlastung
+    const full = text.filter((id) => !/lite/.test(id)).slice(0, 2);
+    const lite = text.find((id) => /lite/.test(id));
+    return [...new Set([...full, lite, ...text])].filter(Boolean).slice(0, 3);
   } catch (e) {
     console.warn(`Modell-Liste nicht abrufbar (${e.message}) – nehme Standard.`);
     return ["gemini-3.5-flash", "gemini-3.5-flash-lite"];
@@ -96,7 +101,7 @@ for (const c of candidates) {
   const n = normUrl(c.url); if (!n) continue;
   if (c.kind === "faa" || aiSeen.has(c)) done.add(n); else deferred++;
 }
-const nextProcessed = { v: 4, urls: [...done].slice(-3000) };
+const nextProcessed = { v: 5, urls: [...done].slice(-3000) };
 
 // ---- Bericht
 const report = [
