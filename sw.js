@@ -1,5 +1,5 @@
 /* E-Jet Ops Watch – Service Worker: App-Shell offline, Daten network-first. */
-const VERSION = "ejw-v3";
+const VERSION = "ejw-v4";
 const SHELL = ["./", "index.html", "styles.css", "app.js", "manifest.webmanifest",
   "icons/icon.svg", "icons/icon-192.png", "icons/icon-512.png", "icons/apple-touch-icon.png"];
 

@@ -292,14 +292,15 @@
   }
 
   function notifySection() {
-    let level = "urgent", allowed = true, version = "";
-    try { level = window.Android.getNotifyLevel(); allowed = window.Android.notificationsAllowed(); version = window.Android.appVersion(); } catch { /* ältere App */ }
+    let level = "all", allowed = true, version = "", canTest = false;
+    try { level = window.Android.getNotifyLevel(); allowed = window.Android.notificationsAllowed(); version = window.Android.appVersion(); canTest = typeof window.Android.testNotification === "function"; } catch { /* ältere App */ }
     const b = (v, l) => `<button type="button" data-notify="${v}" aria-pressed="${level === v}">${l}</button>`;
     return `<section class="section">
         <div class="section-h"><h2>Benachrichtigungen</h2></div>
         <div class="info-list">
-          <div class="row"><span>Melden bei</span><div class="seg" role="group" aria-label="Benachrichtigungen">${b("urgent", "Akut")}${b("all", "Allem")}${b("off", "Aus")}</div></div>
-          <div class="prose"><p class="hint" style="margin:0">„Akut“ meldet neue oder geänderte Groundings und Betriebseinschränkungen. Die App prüft etwa alle 3 Stunden im Hintergrund.${!allowed && level !== "off" ? " <b>Benachrichtigungen sind in den Android-Einstellungen blockiert.</b>" : ""}</p></div>
+          <div class="row"><span>Melden bei</span><div class="seg" role="group" aria-label="Benachrichtigungen">${b("all", "Allem")}${b("urgent", "Akut")}${b("off", "Aus")}</div></div>
+          <div class="prose"><p class="hint" style="margin:0">„Allem“ meldet jeden neuen Eintrag und jedes inhaltliche Update (z. B. gefundene Ursache, AD in Kraft, behoben). „Akut“ nur bei Groundings und Betriebseinschränkungen. Die App prüft etwa stündlich; neue Daten gibt es um 06:30 und 17:30.${!allowed && level !== "off" ? " <b>Benachrichtigungen sind in den Android-Einstellungen blockiert.</b>" : ""}</p></div>
+          ${canTest ? `<div class="row"><span>Test</span><button type="button" class="btn" id="testNotify">Test-Benachrichtigung</button></div>` : ""}
           ${version ? `<div class="row"><span>App-Version</span><span class="mono">${esc(version)}</span></div>` : ""}
         </div>
       </section>`;
@@ -362,6 +363,8 @@
       toast(b.dataset.notify === "off" ? "Benachrichtigungen aus" : "Benachrichtigungen an");
       setTimeout(screenInfo, 400);
     }));
+    const tn = $("#testNotify");
+    if (tn) tn.addEventListener("click", () => { try { window.Android.testNotification(); } catch { /* ältere App */ } });
     const ib = $("#installBtn");
     if (ib && deferredInstall) { ib.hidden = false; ib.addEventListener("click", async () => { deferredInstall.prompt(); await deferredInstall.userChoice; deferredInstall = null; ib.hidden = true; }); }
   }
