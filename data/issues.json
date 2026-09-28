@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "lastScan": "2026-09-28T21:14:48+02:00",
-  "note": "0 neu, 1 aktualisiert",
+  "lastScan": "2026-09-28T21:45:15+02:00",
+  "note": "0 neu, 4 aktualisiert · KI teilweise",
   "issues": [
     {
       "id": "cf34-8e-fadec-idle-lock",
@@ -219,14 +219,44 @@
           "title": "Seu Crédito Digital – Falha no GPS da Embraer cancela voos da Azul",
           "url": "https://news.google.com/rss/articles/CBMieEFVX3lxTE1CbzBNYXB6LVFtb09JZFNRb1hhbE1HR0l4VDByTk1mVmVFYXpPQmFCcG94b1psZVhnR3RKbV9jeXhnTDktYmREbGJZRjVmaUR6WDN5VWhGRm5sVHF4ZkxOU1pxMVUyQ1ZFNEhkWGZGc3FReUpkcEE2UA?oc=5",
           "date": "2026-09-25"
+        },
+        {
+          "title": "Simple Flying – Embraer Opens Crisis Room As Global E2 GPS Failure Forces Airlines To Cancel Flights",
+          "url": "https://news.google.com/rss/articles/CBMijAFBVV95cUxQdS14ZEhuRUpRZ3VRMWdxbUtScThDR2xfc3Z2R0QtMXZnbXZ1c2sycHdIUjVhTHRfMmVHaTZFQ3lORENYanIyMFdERGxtZk82b3ZZZVM3TmlGd3c1RWR4bTVneUY1aWdDV2RKcTJtdW5GZU1lZkxOTk9ma28xa1JaX0NqNFhRbG44UVVrdg?oc=5",
+          "date": "2026-09-23"
+        },
+        {
+          "title": "G1 – Após falha em GPS da Embraer, Azul anuncia ajustes na malha e alerta para impactos em voos",
+          "url": "https://news.google.com/rss/articles/CBMi6gFBVV95cUxNR2JkUmtPMHpGMTUzWjlfc0tlRmZESkU3c1lTdlU5NUhyQlJIUzJmaGFqX0ZZai1RdlBlTHFjQTJYbU1RWjFFN1ExYkhqT0k5OU40SnIzeWVXdmRrMnl6cnVOdW5rYTlFNlVkRDM1cUpWLUc0X0J1T0s3cERJRVlRY0RTZkdEWV9sbWRGODNHMFNuVGR0VUR1cjBUbUZDS1dDRmxlTjdVaUsySFM4Wjk3X2M1TW5UbFlHamQxRnRvMTM5WkQwVzlrSU9QY01VWGJMc2tUVjlRNW01amdsSXE0Z2p3VTdveF9qUnfSAfgBQVVfeXFMT0FhZEF6bTdYeTNQRGpGR1U5Y04zV284bUNqVXpTYm92MWtZS051b2NJN2ZnU1JsdV9IaG5faWV4ZUkzVWpNVVNxVEc0dC1PVGRYTGxQV3k3NmR1ZVQ2Y0c1WWZDTXJqVER6dFhzLUdycGdVWEt5VGtWU0JvX1JfZ080ZFVHd2tJOXlxaFdTS2pMTmE1Ylh3cUNDMW00UGV1X1JPTEMyNGdTbE93MUt4Rzc2VnQycVlNZWNhQXFpMkZPdV9faEo0R1VMQTVXUmpCbHZ0UHdwcjQ0UnhfMzFqN21KQU5fd3RXTVRCeE9JeDRXTUNuSzJfVkI?oc=5",
+          "date": "2026-09-23"
+        },
+        {
+          "title": "Mercado e Eventos – Azul cancela mais de 80 voos após instabilidade global no GPS das aeronaves Embraer E195-E2",
+          "url": "https://news.google.com/rss/articles/CBMi3AFBVV95cUxPY3cyWnRmQXkydTIzSDl6QXF1QnVnTTZ2TXQ1d3A4RUl3alljeXU3Y0FiTnE3TjlORzhjOV95MVpHUFBlYTlxZkFsaFpPWGNFWXNjZUE5MU81RWQ3MkF3Q0YtU2lSYURDSElnZi1wN1kzcHNTV2Y0MXJrdzVEdHhwSWg4dXpNMXo5SzlFSU9FcVdkNS11eWNMVDJrS0xqdjV1ek5VTGFZLUktSFZ6VlRlaV8wc1NTZW1SRjNOOUZYd0c1MFVfaFN3MnJyYUZSemxSaXhzWXhDNnR4ZTV3?oc=5",
+          "date": "2026-09-23"
+        },
+        {
+          "title": "aeroTELEGRAPH – GPS-Probleme bei Embraer E2 treffen Airlines weltweit",
+          "url": "https://news.google.com/rss/articles/CBMivAFBVV95cUxPaXlVdkprSmhON2FpaVhNeHhIcmp2T0QxY2Q2QXM0eldESG9qS3k5NV9oSWFxc1JTVjh4dXNoZGtZaVhxNUl6X1lZRUd0Y2JyN1Jxd0ZBN2NjZWZ2NERvNmdXdlJHcVJqNjJ5c0VpRXhyZGdFbFBDbUp4N2JrM2RrRGNiWVF0VndZY3RWZVFwUVc0YjhuVHdwLWtnU3hwNEswYlBtX0E1eFgtVWxCbWo3OWs5YTIzNlphR0lFYw?oc=5",
+          "date": "2026-09-23"
+        },
+        {
+          "title": "InfoMoney – Falha em GPS no Embraer E2 afeta voos da Azul: há impacto para ações das companhias?",
+          "url": "https://news.google.com/rss/articles/CBMivgFBVV95cUxQYjlLQ3BQSDM1dVJHbmc4amdTTVIyT3VidjJ6MDg4MEhSYlViVWQxY01ycWg4czN5cXlEdFBZYS1aUFV4UEV5ZjVSTm5TSDNWWHZFNFZGbm5YclZuRkhJMm1KV29CdDdLdFVxcDVfS0VCUjlhQnFWWG9qRmtkenJSNUJEN1R5Wjk1amEtQnV0blNVaWQwSE05R2FEbFJwa3h4TjVUbzI3WGRFbmlNZzZ0b3ZvTmJ3b0ZheHVRMFFn0gHDAUFVX3lxTE55VzF4c1V0enRZYVVGaV8xM3pjc1JwSmNuZHVnMkx5Vjl2dXA3YjVJa1dxZGRNS19hQkc2WVlRcHF1SzBMV18zVThHcF9OZkI2RzhuTU45bFFTRUFNN2xtVjhVcmxKS054TlF3VjZlWlZKNG5Ob1JSUWctVWlyc0ZRQ2ctZ2Jub3JaZzFkQmtNYWxTQ2pDVnNqbFAyZkhmZnpGb3JEMmdVeXU3MjV4NGFlUUN5bXQ3aFZPWFRWT2g3cFlkOA?oc=5",
+          "date": "2026-09-23"
+        },
+        {
+          "title": "Gazeta do Povo – Problema global em GPS paralisa voos da Azul com Embraer E2",
+          "url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxNcVVzcmhaTzRxc2RkWUVFTUpsQ201NTVGSHhORklnbFhwdVIzbmlZeUFGbGV6OUR1WWJGWC13TDNLOUFBUWVybHNkYWpYUDg2dEN0LVBFckJ5bTdiclA3ZFhvdTl1Q1BqWXpmNW9DOEpuQV9CN3NJV3JTODE5MGw2RE1LbWVaUFlCelZ5TjZiWVNza0g1cE02am96NzlZWWlmYzVLMnlUNTZTUEk?oc=5",
+          "date": "2026-09-23"
         }
       ],
       "status": "active",
-      "summary": "Die GPS-Empfangsstörung bei Honeywell Primus Epic 2 betrifft laut Folgeberichten die weltweite E2-Flotte breiter als zunächst bekannt: Neben Azul (rund ein Drittel der Flotte am 23.09. am Boden, 43 Jets betroffen) meldeten auch Porter Airlines, Virgin Australia, die mexikanische Mexicana sowie mehrere europäische Fluggesellschaften Ausfälle bzw. Annullierungen. Embraer Technical Services hat ein Bulletin mit einem provisorischen Reset-Verfahren veröffentlicht; eine dauerhafte technische Lösung steht laut Berichten weiterhin aus, Ursachenanalyse durch gemeinsamen Krisenstab von Embraer und Honeywell läuft.",
+      "summary": "Die weltweite GPS-Empfangsstörung beim Avioniksystem Honeywell Primus Epic 2 führte bei Azul am 23.09. zur Stornierung von über 80 Flügen mit rund 8'000 betroffenen Passagieren. Neben Azul sind auch weitere internationale E2-Betreiber wie Porter Airlines und Virgin Australia von der Störung betroffen (laut Berichten).",
       "system": "Avionik / Navigation (ATA 34)",
       "title": "GPS-Empfangsausfall Honeywell Primus Epic 2 – weltweite E2-Störung",
-      "updated": "2026-09-28T21:14:48+02:00",
-      "latest": "28.09. AirGuide Business: Embraer E2 GPS Reception Issue Disrupts Airlines Worldwide"
+      "updated": "2026-09-28T21:45:15+02:00",
+      "latest": "23.09. aeroTELEGRAPH: GPS-Probleme bei Embraer E2 treffen Airlines weltweit"
     },
     {
       "id": "e2-mau3b-braking",
@@ -383,11 +413,11 @@
     }
   ],
   "lastRun": {
-    "at": "2026-09-28T21:14:48+02:00",
+    "at": "2026-09-28T21:45:15+02:00",
     "faa": 0,
-    "news": 88,
+    "news": 89,
     "candidates": 30,
-    "mode": "Regeln",
+    "mode": "KI teilweise",
     "errors": []
   }
 }
