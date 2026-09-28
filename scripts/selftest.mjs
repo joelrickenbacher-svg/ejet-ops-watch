@@ -41,7 +41,8 @@ console.log("Selbsttest ok –", r.log.length, "Hinweise erwartet verworfen:\n" 
 
 // ---------------------------------------------------------------- Sammler & Aufbereitung (ohne Netz)
 const { parseRss, isRelevantNews, parseFederalRegister, isRelevantFaa, familyOf } = await import("./sources.mjs");
-const { enrich, heuristicFaa } = await import("./enrich.mjs");
+process.env.AI_ENDPOINT ||= "https://example.invalid/v1/chat/completions"; // nur für den simulierten KI-Test
+const { enrich, heuristicFaa, matchIssue } = await import("./enrich.mjs");
 
 const rss = `<?xml version="1.0"?><rss><channel>
 <item><title>Embraer E195-E2 jets grounded after GPS fault - FlightGlobal</title><link>https://news.google.com/rss/articles/AAA?oc=5</link><pubDate>Tue, 22 Sep 2026 20:00:00 GMT</pubDate><description>&lt;a href="x"&gt;Embraer E195-E2 jets grounded after GPS fault&lt;/a&gt;&amp;nbsp;&lt;font&gt;FlightGlobal&lt;/font&gt;</description><source url="https://www.flightglobal.com">FlightGlobal</source></item>
@@ -100,4 +101,16 @@ console.log("Selbsttest Sammler/Aufbereitung ok");
 assert.equal(isRelevantNews("Falha de GPS nos jatos da Embraer foi provavelmente causada por teste em satélite militar americano"), true, "Folgemeldung Embraer GPS");
 assert.equal(isRelevantNews("US Air Force satellite test disrupted GPS on airline jets"), true, "Folgemeldung GPS-Test");
 assert.equal(isRelevantNews("Embraer reports record quarterly deliveries"), false, "Geschäftsmeldung");
+// Regeln: Folgemeldung zur GPS-Störung wird dem GPS-Eintrag zugeordnet
+const gps = data.issues.find((i) => /GPS/.test(i.title));
+if (gps) {
+  const nts = { kind: "news", url: "https://news.google.com/rss/articles/NTS3", title: "Falha de GPS nos jatos da Embraer foi provavelmente causada por teste em satélite militar americano", source: "AEROIN", snippet: "", date: "2026-09-25" };
+  assert.equal(matchIssue(nts, data.issues)?.id, gps.id, "Zuordnung GPS");
+  const r4 = await enrich([nts], data.issues, { token: "", models: [] });
+  const r5 = applyAnswer(data, r4.answer, new Set([normUrl(nts.url)]), "2026-09-28T21:00:00+02:00");
+  const g = r5.data.issues.find((i) => i.id === gps.id);
+  assert.equal(r5.updated, 1); assert.match(g.latest, /^25\.09\. AEROIN: Falha de GPS/);
+  assert.equal(g.sources.at(-1).date, "2026-09-25");
+}
+assert.equal(matchIssue({ title: "Embraer E175 flap actuator failure", snippet: "" }, data.issues)?.id ?? null, data.issues.find((i) => /Querruder/.test(i.title) && i.family.includes("E1"))?.id ?? null, "keine E2-Zuordnung für E1-Meldung");
 console.log("Selbsttest Folgemeldungen ok");

@@ -1,12 +1,11 @@
 #!/usr/bin/env node
 // Tägliche Aktualisierung ohne Anthropic-API:
 //   1. FAA-Dokumente (Federal Register) und Meldungen (Google-News-Feeds) sammeln
-//   2. mit GitHub Models (kostenlos in Actions) auf Deutsch aufbereiten, sonst Regeln
+//   2. per Regeln zuordnen (Folgemeldungen → bestehender Eintrag, FAA-Dokumente → neue Einträge)
 //   3. prüfen und in data/issues.json einarbeiten
 //
 // Umgebungsvariablen:
-//   GITHUB_TOKEN   (in Actions automatisch; ohne → nur Regeln)
-//   MODELS_MODEL   (optional, z. B. openai/gpt-4.1-mini)
+//   AI_TOKEN, AI_ENDPOINT, AI_MODEL  (optional: OpenAI-kompatibler KI-Dienst; ohne → nur Regeln)
 //   DRY_RUN=1      (optional: nichts schreiben)
 import { readFile, writeFile, appendFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
@@ -21,8 +20,9 @@ const PROCESSED = join(ROOT, "data", "processed.json");
 const DRY = process.env.DRY_RUN === "1";
 
 const data = JSON.parse(await readFile(DATA, "utf8"));
-let processed = { urls: [] };
+let processed = { v: 2, urls: [] };
 try { processed = JSON.parse(await readFile(PROCESSED, "utf8")); } catch { /* erster Lauf */ }
+if (processed.v !== 2) processed = { v: 2, urls: [] }; // ältere Liste verwerfen (neue Zuordnungsregeln)
 const done = new Set(processed.urls || []);
 for (const it of data.issues) for (const s of it.sources || []) { const n = normUrl(s.url); if (n) done.add(n); }
 
@@ -46,8 +46,9 @@ const candidates = [
 ];
 
 // ---- 2. Aufbereiten
-const token = process.env.GITHUB_TOKEN;
-const models = [...new Set([process.env.MODELS_MODEL, "openai/gpt-4.1-mini", "openai/gpt-4o-mini"].filter(Boolean))];
+// Optional: OpenAI-kompatibler KI-Dienst (AI_TOKEN + AI_ENDPOINT + AI_MODEL). Ohne → nur Regeln.
+const token = process.env.AI_TOKEN || "";
+const models = [process.env.AI_MODEL].filter(Boolean);
 const { answer, mode, log } = candidates.length
   ? await enrich(candidates, data.issues, { token, models })
   : { answer: { new: [], updates: [] }, mode: "–", log: [] };
@@ -55,11 +56,11 @@ const { answer, mode, log } = candidates.length
 // ---- 3. Einarbeiten (Quellen müssen aus den gesammelten Kandidaten stammen)
 const known = new Set(candidates.map((c) => normUrl(c.url)).filter(Boolean));
 const result = applyAnswer(data, answer, known, now);
-result.data.note = `${result.data.note}${candidates.length ? ` · ${mode}` : ""}`;
+if (mode !== "Regeln" && candidates.length) result.data.note = `${result.data.note} · ${mode}`;
 result.data.lastRun = { at: now, faa: faa.length, news: news.length, candidates: candidates.length, mode, errors };
 
 for (const c of candidates) { const n = normUrl(c.url); if (n) done.add(n); }
-const nextProcessed = { urls: [...done].slice(-3000) };
+const nextProcessed = { v: 2, urls: [...done].slice(-3000) };
 
 // ---- Bericht
 const report = [

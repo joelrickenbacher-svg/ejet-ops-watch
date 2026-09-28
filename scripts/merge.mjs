@@ -2,7 +2,7 @@
 export const SEVERITIES = ["grounding", "limitation", "inspection", "watch"];
 export const STATUSES = ["active", "proposed", "inforce", "monitoring", "resolved"];
 export const FAMILIES = ["E1", "E2"];
-const TEXT_FIELDS = ["title", "summary", "impact", "models", "system", "ref", "deadline"];
+const TEXT_FIELDS = ["title", "summary", "impact", "models", "system", "ref", "deadline", "latest"];
 const UPDATABLE = [...TEXT_FIELDS, "severity", "status", "family", "date", "operators", "sources"];
 
 /** ISO-Zeitstempel in Europe/Zurich, z. B. 2026-09-25T06:31:00+02:00 */
@@ -58,7 +58,9 @@ function cleanSources(list, known, log, ctx) {
     const n = normUrl(url);
     if (!n) { log.push(`${ctx}: ungültige Quelle verworfen (${url})`); continue; }
     if (known && !known.has(n)) { log.push(`${ctx}: Quelle nicht in Suchergebnissen, verworfen (${url})`); continue; }
-    out.push({ title: str(s?.title, 200) || new URL(url).hostname, url });
+    const src = { title: str(s?.title, 200) || new URL(url).hostname, url };
+    if (typeof s?.date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(s.date)) src.date = s.date;
+    out.push(src);
   }
   return out;
 }

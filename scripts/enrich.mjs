@@ -3,7 +3,7 @@
 import { extractJson } from "./merge.mjs";
 import { familyOf } from "./sources.mjs";
 
-const ENDPOINT = "https://models.github.ai/inference/chat/completions";
+const ENDPOINT = process.env.AI_ENDPOINT || "";
 const SEVERITIES = ["grounding", "limitation", "inspection", "watch"];
 const STATUSES = ["active", "proposed", "inforce", "monitoring", "resolved"];
 
@@ -87,7 +87,43 @@ export function heuristicFaa(c) {
   };
 }
 
-const GROUNDING_NEWS = /(grounded|grounding|AOG|aircraft on ground|am Boden|gegroundet|no solo|em solo|en tierra|parad[oa]s)/i;
+const GROUNDING_NEWS = /(grounded|grounding|AOG|aircraft on ground|am Boden|gegroundet|no solo|em solo|en tierra|parad[oa]s|emergency directive|emergency AD)/i;
+
+// Themen-Wörterbuch: verbindet Meldungen mit bestehenden Einträgen
+const TOPICS = {
+  gps: /\b(GPS|GNSS|NTS-?3|satellit|satélite|satelite|Primus Epic|navigation)/i,
+  gtf: /(PW1900G|PW1000G|GTF|geared turbofan|Pratt|combustor|Brennkammer|powder metal|Pulvermetall)/i,
+  cf34: /(CF34|FADEC|EEC)/i,
+  hpc: /(\bHPC\b|compressor|Verdichter|stator|bushing)/i,
+  flightctl: /(aileron|Querruder|flap|backlash|flutter|flight control|Flugsteuerung)/i,
+  brakes: /(brak|Bremse|MAU\b|modular avionics)/i,
+  radalt: /(radio altimeter|radar altimeter|Radio-Altimeter|5G|C-band|C-Band)/i,
+  gear: /(landing gear|Fahrwerk|MLG|NLG|trem de pouso)/i,
+  pylon: /(pylon|engine mount|Triebwerksaufhängung)/i,
+  bleed: /(overheat|bleed|ODS\b|Überhitz)/i,
+  perf: /(takeoff calculation|CAFM|flight manual|Startberechnung)/i,
+};
+const topicsOf = (t) => Object.entries(TOPICS).filter(([, re]) => re.test(t || "")).map(([k]) => k);
+const fmtDay = (d) => (/^\d{4}-\d{2}-\d{2}$/.test(d || "") ? `${d.slice(8, 10)}.${d.slice(5, 7)}.` : "");
+
+/** Ordnet eine Meldung einem offenen Eintrag zu (gleiches Thema, passende Familie). */
+export function matchIssue(c, issues) {
+  const ct = topicsOf(`${c.title} ${c.snippet || ""}`);
+  if (!ct.length) return null;
+  const cf = familyOf(`${c.title} ${c.snippet || ""}`);
+  let best = null, bestScore = 0;
+  for (const it of issues) {
+    if (it.status === "resolved") continue;
+    const it_t = topicsOf(`${it.title} ${it.system || ""} ${it.models || ""}`);
+    const shared = ct.filter((t) => it_t.includes(t)).length;
+    if (!shared) continue;
+    if (cf.length && it.family?.length && !cf.some((f) => it.family.includes(f))) continue;
+    // aktive Einträge bevorzugen, dann neuere
+    const score = shared * 10 + (it.status === "active" ? 5 : it.status === "monitoring" ? 3 : 0) + (String(it.date) > "2026" ? 1 : 0);
+    if (score > bestScore) { best = it; bestScore = score; }
+  }
+  return best;
+}
 
 export function heuristicNews(c) {
   const fam = familyOf(`${c.title} ${c.snippet}`);
@@ -113,7 +149,7 @@ export function heuristicNews(c) {
 export async function enrich(candidates, issues, { token, models = [] } = {}) {
   const log = [];
   const answer = { new: [], updates: [] };
-  const srcOf = (c) => [{ title: `${c.kind === "faa" ? "Federal Register" : c.source || "Meldung"} – ${c.title}`.slice(0, 200), url: c.url }];
+  const srcOf = (c) => [{ title: `${c.kind === "faa" ? "Federal Register" : c.source || "Meldung"} – ${c.title}`.slice(0, 200), url: c.url, date: c.date }];
 
   // 1) FAA Final Rule zu einem bestehenden NPRM (gleiches Docket) → Status "in Kraft"
   const rest = [];
@@ -134,7 +170,7 @@ export async function enrich(candidates, issues, { token, models = [] } = {}) {
     .map((i) => `${i.id} | ${i.title} | ${i.status}${i.ref ? " | " + String(i.ref).slice(0, 80) : ""}`).join("\n");
   const decided = new Map(); // Kandidat → Entscheidung
   let aiOk = 0, aiFail = 0;
-  if (token && rest.length) {
+  if (token && ENDPOINT && models.length && rest.length) {
     for (let start = 0; start < rest.length; start += 6) {
       const batch = rest.slice(start, start + 6);
       const user = `Bestehende Einträge (id | Titel | Status | Referenz):\n${existing}\n\nKandidaten:\n\n${batch.map((c, k) => describe(c, k)).join("\n\n")}`;
@@ -155,6 +191,7 @@ export async function enrich(candidates, issues, { token, models = [] } = {}) {
 
   // 3) Entscheidungen umsetzen, sonst Regeln
   let fallbackNews = 0;
+  const linked = {};
   for (const c of rest) {
     const d = decided.get(c);
     if (d && d.action === "update" && issues.some((i) => i.id === d.target)) {
@@ -182,10 +219,28 @@ export async function enrich(candidates, issues, { token, models = [] } = {}) {
     if (c.kind === "faa") {
       if (d && d.action === "ignore") { log.push(`FAA ${c.docNumber} von KI als nicht relevant eingestuft`); continue; }
       answer.new.push({ ...heuristicFaa(c), operators: [], sources: srcOf(c) });
-    } else if (!d && GROUNDING_NEWS.test(c.title) && fallbackNews < 2) {
-      answer.new.push({ ...heuristicNews(c), operators: [], sources: srcOf(c) });
-      fallbackNews++;
+    } else if (!d) {
+      const hit = matchIssue(c, issues);
+      if (hit) {
+        (linked[hit.id] ||= []).push(c);
+      } else if (GROUNDING_NEWS.test(c.title) && fallbackNews < 2) {
+        answer.new.push({ ...heuristicNews(c), operators: [], sources: srcOf(c) });
+        fallbackNews++;
+      }
     }
+  }
+  // Pro Eintrag: bis zu 3 neue Quellen, neueste Schlagzeile als "latest"
+  for (const [id, list] of Object.entries(linked)) {
+    list.sort((a, b) => String(b.date).localeCompare(String(a.date)));
+    const top = list[0];
+    answer.updates.push({
+      id,
+      fields: {
+        latest: `${fmtDay(top.date)} ${top.source ? top.source + ": " : ""}${top.title}`.trim(),
+        sources: list.slice(0, 3).flatMap(srcOf),
+      },
+    });
+    log.push(`${list.length} Meldung(en) → ${id}`);
   }
 
   const mode = !token ? "Regeln" : aiFail === 0 ? "KI" : aiOk === 0 ? "Regeln (KI nicht verfügbar)" : "KI teilweise";
