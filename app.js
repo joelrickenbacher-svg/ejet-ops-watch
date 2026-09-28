@@ -149,6 +149,7 @@
       <div class="tags">${nw}<span class="pill s-${sev}">${SEV[sev].short}</span>${fams}<span class="st ${esc(it.status)}">${esc(STATUS[it.status] || it.status || "")}</span></div>
       <h3>${esc(it.title)}</h3>
       <p>${esc(it.summary)}</p>
+      ${it.latest && it.status !== "resolved" ? `<div class="latest"><span>Neu: ${esc(it.latest)}</span></div>` : ""}
       <div class="foot"><span>${esc(fmtDate(it.date))}</span>${it.ref ? `<span>${esc(it.ref)}</span>` : ""}</div>
     </a>`;
   }
@@ -239,7 +240,8 @@
     markSeen([it.id]);
     const starred = state.stars.includes(it.id);
     const fams = (it.family || []).map((f) => `<span class="fam">${esc(f)}</span>`).join("");
-    const src = (it.sources || []).map((s) => `<li><a href="${esc(safeUrl(s.url))}" target="_blank" rel="noopener"><div>${esc(s.title || s.url)}</div><span>${esc(host(s.url))} ↗</span></a></li>`).join("");
+    const srcList = (it.sources || []).map((s, i) => ({ ...s, _i: i })).sort((a, b) => String(b.date || "").localeCompare(String(a.date || "")) || b._i - a._i);
+    const src = srcList.map((s) => `<li><a href="${esc(safeUrl(s.url))}" target="_blank" rel="noopener"><div>${esc(s.title || s.url)}</div><span>${s.date ? esc(fmtDate(s.date)) + " · " : ""}${esc(host(s.url))} ↗</span></a></li>`).join("");
     view.innerHTML = `<article class="detail">
       <div class="tags">${wasNew ? `<span class="pill new">${newKind(it)}</span>` : ""}<span class="pill s-${sev}">${SEV[sev].label}</span>${fams}<span class="st ${esc(it.status)}">${esc(STATUS[it.status] || it.status || "")}</span></div>
       <h2>${esc(it.title)}</h2>
@@ -248,6 +250,7 @@
         <button class="btn ${starred ? "primary" : ""}" id="starBtn" type="button" aria-pressed="${starred}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12v18l-6-4-6 4z"/></svg>${starred ? "Gemerkt" : "Merken"}</button>
         <button class="btn" id="shareBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v13M7 8l5-5 5 5"/><path d="M5 13v7h14v-7"/></svg>Teilen</button>
       </div>
+      ${it.latest ? `<div class="block"><span class="label">Neueste Meldung</span><p>${esc(it.latest)}</p><p class="hint">Automatisch zugeordnet – Details in den Quellen unten.</p></div>` : ""}
       <div class="block impact"><span class="label">Operationelle Auswirkung</span><p>${esc(it.impact || "–")}</p></div>
       <div class="facts">
         <div><span class="label">Datum</span><span class="mono">${esc(fmtDate(it.date))}</span></div>

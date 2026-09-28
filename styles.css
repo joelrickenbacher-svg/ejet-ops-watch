@@ -156,3 +156,6 @@ textarea{width:100%;min-height:96px;resize:vertical;font:15px/1.45 var(--f-body)
   background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-weight:600;font-size:14px;max-width:calc(100% - 32px)}
 
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+.card .latest{margin-top:8px;padding:6px 8px;border-radius:6px;background:var(--new-soft);color:var(--ink);font-size:14px;line-height:1.35}
+.card .latest span{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
