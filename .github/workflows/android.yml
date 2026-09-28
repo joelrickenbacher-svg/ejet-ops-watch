@@ -31,8 +31,8 @@ jobs:
           distribution: temurin
           java-version: "17"
 
-- name: Android-SDK-Lizenzen bestätigen
-           run: yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null || true
+      - name: Android-SDK-Lizenzen bestätigen
+        run: yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null || true
 
       - uses: gradle/actions/setup-gradle@v4
         with:
