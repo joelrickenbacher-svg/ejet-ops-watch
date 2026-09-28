@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "lastScan": "2026-09-28T20:58:34+02:00",
+  "lastScan": "2026-09-28T21:08:52+02:00",
   "note": "Keine Änderungen · Regeln (KI nicht verfügbar)",
   "issues": [
     {
@@ -367,10 +367,10 @@
     }
   ],
   "lastRun": {
-    "at": "2026-09-28T20:58:34+02:00",
+    "at": "2026-09-28T21:08:52+02:00",
     "faa": 0,
-    "news": 31,
-    "candidates": 24,
+    "news": 89,
+    "candidates": 30,
     "mode": "Regeln (KI nicht verfügbar)",
     "errors": []
   }
