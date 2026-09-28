@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 // Tägliche Aktualisierung ohne Anthropic-API:
 //   1. FAA-Dokumente (Federal Register) und Meldungen (Google-News-Feeds) sammeln
-//   2. per Regeln zuordnen (Folgemeldungen → bestehender Eintrag, FAA-Dokumente → neue Einträge)
+//   2. mit Gemini auf Deutsch aufbereiten (falls Schlüssel vorhanden), sonst per Regeln zuordnen
 //   3. prüfen und in data/issues.json einarbeiten
 //
 // Umgebungsvariablen:
-//   AI_TOKEN, AI_ENDPOINT, AI_MODEL  (optional: OpenAI-kompatibler KI-Dienst; ohne → nur Regeln)
+//   GEMINI_API_KEY (optional, gratis bei Google AI Studio) oder AI_TOKEN + AI_ENDPOINT; AI_MODEL optional
 //   DRY_RUN=1      (optional: nichts schreiben)
 import { readFile, writeFile, appendFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
@@ -20,9 +20,9 @@ const PROCESSED = join(ROOT, "data", "processed.json");
 const DRY = process.env.DRY_RUN === "1";
 
 const data = JSON.parse(await readFile(DATA, "utf8"));
-let processed = { v: 2, urls: [] };
+let processed = { v: 3, urls: [] };
 try { processed = JSON.parse(await readFile(PROCESSED, "utf8")); } catch { /* erster Lauf */ }
-if (processed.v !== 2) processed = { v: 2, urls: [] }; // ältere Liste verwerfen (neue Zuordnungsregeln)
+if (processed.v !== 3) processed = { v: 3, urls: [] }; // ältere Liste verwerfen (neue Zuordnungsregeln)
 const done = new Set(processed.urls || []);
 for (const it of data.issues) for (const s of it.sources || []) { const n = normUrl(s.url); if (n) done.add(n); }
 
@@ -46,11 +46,35 @@ const candidates = [
 ];
 
 // ---- 2. Aufbereiten
-// Optional: OpenAI-kompatibler KI-Dienst (AI_TOKEN + AI_ENDPOINT + AI_MODEL). Ohne → nur Regeln.
-const token = process.env.AI_TOKEN || "";
-const models = [process.env.AI_MODEL].filter(Boolean);
+// KI (optional): Google Gemini (GEMINI_API_KEY, gratis Stufe) oder ein anderer OpenAI-kompatibler Dienst
+// (AI_TOKEN + AI_ENDPOINT). Ohne Schlüssel → nur Regeln.
+const GEMINI = "https://generativelanguage.googleapis.com/v1beta/openai";
+const token = process.env.GEMINI_API_KEY || process.env.AI_TOKEN || "";
+const base = (process.env.AI_ENDPOINT || (process.env.GEMINI_API_KEY ? GEMINI : "")).replace(/\/chat\/completions$/, "").replace(/\/+$/, "");
+const endpoint = base ? base + "/chat/completions" : "";
+
+/** Wählt verfügbare Text-Modelle (Flash bevorzugt, neueste zuerst). */
+async function pickModels() {
+  if (process.env.AI_MODEL) return [process.env.AI_MODEL];
+  if (!token || !base) return [];
+  try {
+    const res = await fetch(base + "/models", { headers: { Authorization: `Bearer ${token}` } });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const ids = ((await res.json()).data || []).map((m) => String(m.id).replace(/^models\//, ""));
+    const text = ids.filter((id) => /gemini/i.test(id) && /flash/i.test(id) && !/(tts|live|image|transcribe|embed|audio|vision|omni)/i.test(id));
+    const ver = (id) => Number((id.match(/(\d+(?:\.\d+)?)/) || [0, 0])[1]);
+    text.sort((a, b) => (/preview|exp/.test(a) - /preview|exp/.test(b)) || (/lite/.test(a) - /lite/.test(b)) || ver(b) - ver(a));
+    if (!text.length) throw new Error("keine Flash-Modelle gefunden");
+    return text.slice(0, 3);
+  } catch (e) {
+    console.warn(`Modell-Liste nicht abrufbar (${e.message}) – nehme Standard.`);
+    return ["gemini-3.5-flash", "gemini-3.5-flash-lite"];
+  }
+}
+const models = await pickModels();
+
 const { answer, mode, log } = candidates.length
-  ? await enrich(candidates, data.issues, { token, models })
+  ? await enrich(candidates, data.issues, { token, models, endpoint })
   : { answer: { new: [], updates: [] }, mode: "–", log: [] };
 
 // ---- 3. Einarbeiten (Quellen müssen aus den gesammelten Kandidaten stammen)
@@ -60,13 +84,13 @@ if (mode !== "Regeln" && candidates.length) result.data.note = `${result.data.no
 result.data.lastRun = { at: now, faa: faa.length, news: news.length, candidates: candidates.length, mode, errors };
 
 for (const c of candidates) { const n = normUrl(c.url); if (n) done.add(n); }
-const nextProcessed = { v: 2, urls: [...done].slice(-3000) };
+const nextProcessed = { v: 3, urls: [...done].slice(-3000) };
 
 // ---- Bericht
 const report = [
   `### E-Jet Ops Watch – Lauf ${now}`,
   `FAA-Dokumente: ${faa.length} (seit ${faaSince}) · Meldungen: ${news.length} (${newsDays} Tage) · neu zu prüfen: ${candidates.length}`,
-  `Aufbereitung: ${mode}`,
+  `Aufbereitung: ${mode}${models.length ? ` (${models.join(", ")})` : ""}`,
   `Ergebnis: **${result.data.note}**`,
   errors.length ? `\nQuellen-Fehler:\n${errors.map((e) => `- ${e}`).join("\n")}` : "",
   [...log, ...result.log].length ? `\nHinweise:\n${[...log, ...result.log].map((l) => `- ${l}`).join("\n")}` : "",

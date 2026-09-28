@@ -41,7 +41,6 @@ console.log("Selbsttest ok –", r.log.length, "Hinweise erwartet verworfen:\n" 
 
 // ---------------------------------------------------------------- Sammler & Aufbereitung (ohne Netz)
 const { parseRss, isRelevantNews, parseFederalRegister, isRelevantFaa, familyOf } = await import("./sources.mjs");
-process.env.AI_ENDPOINT ||= "https://example.invalid/v1/chat/completions"; // nur für den simulierten KI-Test
 const { enrich, heuristicFaa, matchIssue } = await import("./enrich.mjs");
 
 const rss = `<?xml version="1.0"?><rss><channel>
@@ -90,7 +89,7 @@ globalThis.fetch = async () => new Response(JSON.stringify({ choices: [{ message
   { i: 0, action: "new", title: "Test-Eintrag", summary: "S", impact: "I", severity: "watch", status: "monitoring", family: ["E2"], date: "2026-10-06" },
   { i: 1, action: "ignore" },
 ] }) } }] }), { status: 200 });
-const r2 = await enrich([fr[2], cands[2]], data.issues, { token: "t", models: ["m"] });
+const r2 = await enrich([fr[2], cands[2]], data.issues, { token: "t", models: ["m"], endpoint: "https://example.invalid/chat/completions" });
 globalThis.fetch = realFetch;
 assert.equal(r2.mode, "KI");
 assert.equal(r2.answer.new.length, 1); assert.equal(r2.answer.new[0].title, "Test-Eintrag");

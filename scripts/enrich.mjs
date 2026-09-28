@@ -3,7 +3,6 @@
 import { extractJson } from "./merge.mjs";
 import { familyOf } from "./sources.mjs";
 
-const ENDPOINT = process.env.AI_ENDPOINT || "";
 const SEVERITIES = ["grounding", "limitation", "inspection", "watch"];
 const STATUSES = ["active", "proposed", "inforce", "monitoring", "resolved"];
 
@@ -16,7 +15,7 @@ Entscheide pro Kandidat:
 - "ignore": nicht im Umfang, kein betriebsrelevantes Problem, oder nichts Neues gegenüber einem bestehenden Eintrag.
 - "update": neue Information zu einem bestehenden Eintrag (target = dessen id), z. B. Ursache gefunden, Fix, AD erlassen, Problem behoben.
 - "new": neues, eigenständiges Problem.
-Wichtig: Meldungen zur URSACHE, Lösung oder Aufhebung eines bestehenden Problems sind "update" des bestehenden Eintrags, auch wenn die Meldung andere Flugzeugtypen mitnennt (z. B. Ursache einer GPS-Störung gefunden). In summary dann den neuen Stand beschreiben.
+Wichtig: Meldungen zur URSACHE, Lösung oder Aufhebung eines bestehenden Problems sind "update" des bestehenden Eintrags, auch wenn die Meldung andere Flugzeugtypen mitnennt (z. B. Ursache einer GPS-Störung gefunden). In summary dann den neuen Gesamtstand in 2–4 Sätzen beschreiben (bisher Bekanntes kurz behalten, Neues ergänzen, Quelle nennen, z. B. "laut Aeroin").
 Benutze nur Fakten aus dem Kandidaten. Nichts erfinden. Unbestätigte Meldungen als "(Berichte)" kennzeichnen.
 Texte auf Deutsch (Schweizer Schreibweise, kein ß), sachlich, knapp.
 severity: grounding = Flugzeuge am Boden/nicht dispatchbar; limitation = Betriebseinschränkung (Verfahren, AFM, MEL, Luftraum, Verfügbarkeit); inspection = Inspektion/Wartung nach AD/SB; watch = beobachten.
@@ -37,9 +36,9 @@ function describe(c, i) {
   return lines.join("\n");
 }
 
-async function callModel(model, token, user) {
+async function callModel(endpoint, model, token, user) {
   for (let attempt = 1; attempt <= 2; attempt++) {
-    const res = await fetch(ENDPOINT, {
+    const res = await fetch(endpoint, {
       method: "POST",
       headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json", Accept: "application/json" },
       body: JSON.stringify({
@@ -146,7 +145,7 @@ export function heuristicNews(c) {
 /**
  * @returns {Promise<{answer:{new:any[],updates:any[]}, mode:string, log:string[]}>}
  */
-export async function enrich(candidates, issues, { token, models = [] } = {}) {
+export async function enrich(candidates, issues, { token, models = [], endpoint = "" } = {}) {
   const log = [];
   const answer = { new: [], updates: [] };
   const srcOf = (c) => [{ title: `${c.kind === "faa" ? "Federal Register" : c.source || "Meldung"} – ${c.title}`.slice(0, 200), url: c.url, date: c.date }];
@@ -167,16 +166,16 @@ export async function enrich(candidates, issues, { token, models = [] } = {}) {
 
   // 2) KI-Aufbereitung in kleinen Paketen (Limits von GitHub Models: ~8k Token Eingabe)
   const existing = issues.filter((i) => i.status !== "resolved")
-    .map((i) => `${i.id} | ${i.title} | ${i.status}${i.ref ? " | " + String(i.ref).slice(0, 80) : ""}`).join("\n");
+    .map((i) => `${i.id} | ${i.title} | ${i.status}${i.ref ? " | " + String(i.ref).slice(0, 80) : ""}\n   Stand: ${String(i.summary || "").slice(0, 260)}`).join("\n");
   const decided = new Map(); // Kandidat → Entscheidung
   let aiOk = 0, aiFail = 0;
-  if (token && ENDPOINT && models.length && rest.length) {
+  if (token && endpoint && models.length && rest.length) {
     for (let start = 0; start < rest.length; start += 6) {
       const batch = rest.slice(start, start + 6);
-      const user = `Bestehende Einträge (id | Titel | Status | Referenz):\n${existing}\n\nKandidaten:\n\n${batch.map((c, k) => describe(c, k)).join("\n\n")}`;
+      const user = `Bestehende Einträge (id | Titel | Status | Referenz, darunter der bisherige Stand):\n${existing}\n\nKandidaten:\n\n${batch.map((c, k) => describe(c, k)).join("\n\n")}`;
       let content = null;
       for (const model of models) {
-        try { content = await callModel(model, token, user); break; }
+        try { content = await callModel(endpoint, model, token, user); break; }
         catch (e) { log.push(`KI nicht verfügbar: ${e.message}`); }
       }
       const parsed = content ? extractJson(content) : null;
@@ -195,7 +194,7 @@ export async function enrich(candidates, issues, { token, models = [] } = {}) {
   for (const c of rest) {
     const d = decided.get(c);
     if (d && d.action === "update" && issues.some((i) => i.id === d.target)) {
-      const fields = { sources: srcOf(c) };
+      const fields = { sources: srcOf(c), latest: `${fmtDay(c.date)} ${c.source ? c.source + ": " : ""}${c.title}`.trim() };
       for (const k of ["summary", "impact", "ref"]) if (clean(d[k])) fields[k] = clean(d[k]);
       if (SEVERITIES.includes(d.severity)) fields.severity = d.severity;
       if (STATUSES.includes(d.status)) fields.status = d.status;
@@ -231,7 +230,8 @@ export async function enrich(candidates, issues, { token, models = [] } = {}) {
   }
   // Pro Eintrag: bis zu 3 neue Quellen, neueste Schlagzeile als "latest"
   for (const [id, list] of Object.entries(linked)) {
-    list.sort((a, b) => String(b.date).localeCompare(String(a.date)));
+    const KEY = /(ursache|grund|causa|causad|cause|caused|blamed|satellit|satélite|fix|behoben|gelöst|solução|resolvid|resolved|solved|update|software|directive|AD\b|diretriz)/i;
+    list.sort((a, b) => (KEY.test(b.title) - KEY.test(a.title)) || String(b.date).localeCompare(String(a.date)));
     const top = list[0];
     answer.updates.push({
       id,
