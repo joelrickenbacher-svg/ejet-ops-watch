@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "lastScan": "2026-09-29T12:48:56+02:00",
+  "lastScan": "2026-09-29T22:07:36+02:00",
   "note": "Keine Änderungen · KI",
   "issues": [
     {
@@ -435,10 +435,10 @@
     }
   ],
   "lastRun": {
-    "at": "2026-09-29T12:48:56+02:00",
+    "at": "2026-09-29T22:07:36+02:00",
     "faa": 0,
-    "news": 86,
-    "candidates": 30,
+    "news": 87,
+    "candidates": 4,
     "mode": "KI",
     "errors": []
   }
