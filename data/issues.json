@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "lastScan": "2026-09-30T22:12:50+02:00",
-  "note": "Keine Änderungen · KI",
+  "lastScan": "2026-10-01T13:04:38+02:00",
+  "note": "Keine Änderungen",
   "issues": [
     {
       "id": "cf34-8e-fadec-idle-lock",
@@ -435,11 +435,11 @@
     }
   ],
   "lastRun": {
-    "at": "2026-09-30T22:12:50+02:00",
+    "at": "2026-10-01T13:04:38+02:00",
     "faa": 0,
-    "news": 15,
-    "candidates": 3,
-    "mode": "KI",
+    "news": 7,
+    "candidates": 0,
+    "mode": "–",
     "errors": []
   }
 }
