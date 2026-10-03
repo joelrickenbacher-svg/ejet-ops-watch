@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "lastScan": "2026-10-02T22:05:02+02:00",
+  "lastScan": "2026-10-03T11:57:20+02:00",
   "note": "Keine Änderungen",
   "issues": [
     {
@@ -435,9 +435,9 @@
     }
   ],
   "lastRun": {
-    "at": "2026-10-02T22:05:02+02:00",
+    "at": "2026-10-03T11:57:20+02:00",
     "faa": 0,
-    "news": 4,
+    "news": 3,
     "candidates": 0,
     "mode": "–",
     "errors": []
