@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "lastScan": "2026-10-21T21:27:55+02:00",
-  "note": "Keine Änderungen",
+  "lastScan": "2026-10-22T11:31:16+02:00",
+  "note": "0 neu, 1 aktualisiert · KI",
   "issues": [
     {
       "id": "cf34-8e-fadec-idle-lock",
@@ -13,19 +13,27 @@
       "impact": "Risiko Schubverlust / eingeschränkte Schubkontrolle; Software-Update der EEC erforderlich. Status der Final Rule beobachten.",
       "models": "E170, E175 (CF34-8E); auch CRJ mit CF34-8C",
       "operators": [],
-      "ref": "FAA NPRM FR 2025-20089",
+      "ref": "FAA AD 2026-21-11 · FR 2026-21590",
       "severity": "limitation",
       "sources": [
         {
           "title": "Federal Register 2025-20089 (NPRM)",
           "url": "https://www.federalregister.gov/documents/2025/11/18/2025-20089/airworthiness-directives-general-electric-company-engines"
+        },
+        {
+          "title": "Federal Register – Airworthiness Directives; General Electric Company Engines",
+          "url": "https://www.federalregister.gov/documents/2026/10/22/2026-21590/airworthiness-directives-general-electric-company-engines",
+          "date": "2026-10-22"
         }
       ],
-      "status": "proposed",
-      "summary": "Nach 'Engine Degraded'-Meldung können bestimmte EEC-Softwareversionen das Triebwerk auf Idle reduzieren und den Schubhebel sperren, bis es abgestellt und neu gestartet wird.",
+      "status": "inforce",
+      "summary": "Die FAA hat die vorgeschlagene Lufttüchtigkeitsanweisung als Final Rule erlassen. Bestimmte FADEC-Softwareversionen der EEC müssen ausser Dienst gestellt und durch eine aktualisierte Software ersetzt werden, um das Festsetzen des Triebwerks auf Idle nach Korrosion des VG-Aktuators zu verhindern.",
       "system": "Triebwerk CF34-8E, EEC/FADEC",
       "title": "CF34-8E: FADEC-Software kann Triebwerk auf Idle festsetzen",
-      "updated": "2026-09-24T07:30:00+02:00"
+      "updated": "2026-10-22T11:31:16+02:00",
+      "latest": "22.10. Lufttüchtigkeitsanweisungen; General Electric Company Triebwerke",
+      "latestOrig": "22.10. Airworthiness Directives; General Electric Company Engines",
+      "latestDe": "22.10. Lufttüchtigkeitsanweisungen; General Electric Company Triebwerke"
     },
     {
       "id": "e1-mlg-locking-stay",
@@ -435,11 +443,11 @@
     }
   ],
   "lastRun": {
-    "at": "2026-10-21T21:27:55+02:00",
-    "faa": 0,
-    "news": 0,
-    "candidates": 0,
-    "mode": "–",
+    "at": "2026-10-22T11:31:16+02:00",
+    "faa": 1,
+    "news": 1,
+    "candidates": 2,
+    "mode": "KI",
     "errors": []
   }
 }
