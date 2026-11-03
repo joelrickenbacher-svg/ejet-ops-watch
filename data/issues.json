@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "lastScan": "2026-11-03T00:10:41+01:00",
-  "note": "Keine Änderungen",
+  "lastScan": "2026-11-03T13:08:46+01:00",
+  "note": "1 neu, 0 aktualisiert · KI",
   "issues": [
     {
       "id": "cf34-8e-fadec-idle-lock",
@@ -440,14 +440,38 @@
       "system": "Radio-Altimeter",
       "title": "FAA-Regel: störfeste Radio-Altimeter bis Ende 2030 Pflicht",
       "updated": "2026-09-24T07:30:00+02:00"
+    },
+    {
+      "id": "e1-aktualisierte-lufttuchtigkeitsbegrenzungen-nprm",
+      "title": "E1: Aktualisierte Lufttüchtigkeitsbegrenzungen (NPRM)",
+      "summary": "Die FAA hat ein NPRM (Vorschlag für eine AD) veröffentlicht, das die bisherige AD 2024-17-03 für bestimmte E190- und E190-200-Modelle ablösen soll. Grund sind neu festgelegte, restriktivere Instandhaltungs- und Inspektionsvorgaben in den Airworthiness Limitations. Betroffene Betreiber müssen das Wartungs- oder Inspektionsegramm entsprechend anpassen.",
+      "impact": "Betriebseinschränkung durch strengere Instandhaltungs- und Inspektionsvorgaben gemäss den revidierten Airworthiness Limitations.",
+      "models": "ERJ 190-100 (STD, LR, IGW, ECJ), ERJ 190-200 (STD, LR, IGW)",
+      "system": "Airworthiness Limitations",
+      "ref": "FAA Docket No. FAA-2026-11822 · FR 2026-22382",
+      "severity": "limitation",
+      "status": "proposed",
+      "family": [
+        "E1"
+      ],
+      "date": "2026-11-03",
+      "operators": [],
+      "sources": [
+        {
+          "title": "Federal Register – Airworthiness Directives; Embraer S.A. (Type Certificate Previously Held by Yaborã Indústria Aeronáutica S.A.; Embraer S.A.) Airplanes",
+          "url": "https://www.federalregister.gov/documents/2026/11/03/2026-22382/airworthiness-directives-embraer-sa-type-certificate-previously-held-by-yabor-indstria-aeronutica-sa",
+          "date": "2026-11-03"
+        }
+      ],
+      "updated": "2026-11-03T13:08:46+01:00"
     }
   ],
   "lastRun": {
-    "at": "2026-11-03T00:10:41+01:00",
-    "faa": 2,
+    "at": "2026-11-03T13:08:46+01:00",
+    "faa": 3,
     "news": 0,
-    "candidates": 0,
-    "mode": "–",
+    "candidates": 1,
+    "mode": "KI",
     "errors": []
   }
 }
